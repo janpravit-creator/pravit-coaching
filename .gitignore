@@ -23,3 +23,6 @@ yarn-error.log*
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Fertiges Bündel für den Netlify-Upload – gehört nicht ins Repository.
+pravit-coaching-dist.zip
