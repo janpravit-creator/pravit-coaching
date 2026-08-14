@@ -7,8 +7,11 @@ import { fileURLToPath, URL } from 'node:url';
 const outDir = fileURLToPath(new URL('../public/icons/', import.meta.url));
 
 /**
- * Eine vereinfachte Hantelstange, aus drei einfachen Formen gebaut: zwei
- * hochkant stehende Scheiben, eine Stange dazwischen. Passt zu einer
+ * Eine Hantel mit gestaffelten Scheiben: pro Seite eine kleine Scheibe außen
+ * und eine große innen, beide vollständig getrennt statt überlappend – zwei
+ * unterschiedlich große, sich nur teilweise überlappende Formen erzeugen an
+ * der Nahtstelle eine kleine Stufe/Ecke statt einer glatten Kontur. Getrennte
+ * Scheiben vermeiden das und sehen nebenbei realistischer aus. Passt zu einer
  * Coaching-App, ohne wie das Logbuch-Icon (dort: drei aufsteigende Balken)
  * auszusehen – beide Apps landen auf demselben Home-Bildschirm und sollen
  * sich klar unterscheiden. Dieselben Formen stecken auch in
@@ -17,9 +20,11 @@ const outDir = fileURLToPath(new URL('../public/icons/', import.meta.url));
  * dort von Hand mitgezogen werden.
  */
 const motiv = `
-  <rect x="72" y="132" width="64" height="248" rx="32" fill="#FFFFFF"/>
-  <rect x="376" y="132" width="64" height="248" rx="32" fill="#FFFFFF"/>
-  <rect x="96" y="236" width="320" height="40" rx="20" fill="#FFFFFF"/>`;
+  <rect x="112" y="242" width="288" height="28" rx="14" fill="#FFFFFF"/>
+  <rect x="100" y="166" width="44" height="180" rx="20" fill="#FFFFFF"/>
+  <rect x="52" y="206" width="40" height="100" rx="20" fill="#FFFFFF"/>
+  <rect x="368" y="166" width="44" height="180" rx="20" fill="#FFFFFF"/>
+  <rect x="420" y="206" width="40" height="100" rx="20" fill="#FFFFFF"/>`;
 
 /** Normales Icon: randlos, volle Fläche. */
 const icon = (size) => `
