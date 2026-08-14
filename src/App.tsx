@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { AppMark } from './components/AppMark';
 import { ToastHost } from './components/ui/Toast';
 import { beobachteSystemTheme } from './lib/theme';
 import { useAuthStore } from './state/authStore';
@@ -118,11 +119,7 @@ function Startbildschirm() {
   return (
     <div className="flex min-h-full items-center justify-center">
       <div className="flex flex-col items-center gap-4">
-        <div className="flex h-16 w-16 items-end justify-center gap-1.5 rounded-3xl bg-action p-3.5">
-          <span className="h-[35%] w-2 rounded-full bg-white/55" />
-          <span className="h-[60%] w-2 rounded-full bg-white/80" />
-          <span className="h-[95%] w-2 rounded-full bg-positive" />
-        </div>
+        <AppMark size={64} />
         <span className="text-[15px] font-semibold tracking-[0.2em] text-muted">PRAVIT</span>
       </div>
     </div>

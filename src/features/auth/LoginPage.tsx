@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AppMark } from '@/components/AppMark';
 import { PrimaryButton, SecondaryButton, TextButton } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { TextField } from '@/components/ui/Field';
@@ -40,11 +41,7 @@ export default function LoginPage() {
     <Screen className="flex min-h-full flex-col justify-center">
       <div className="mx-auto w-full max-w-sm py-10">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-5 flex h-16 w-16 items-end justify-center gap-1.5 rounded-3xl bg-action p-3.5">
-            <span className="h-[35%] w-2 rounded-full bg-white/55" />
-            <span className="h-[60%] w-2 rounded-full bg-white/80" />
-            <span className="h-[95%] w-2 rounded-full bg-positive" />
-          </div>
+          <AppMark size={64} className="mx-auto mb-5" />
           <h1 className="text-[32px] font-extrabold tracking-[0.18em]">PRAVIT</h1>
           <p className="mt-1.5 text-[15px] text-muted">Coaching</p>
         </div>

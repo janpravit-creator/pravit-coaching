@@ -7,19 +7,19 @@ import { fileURLToPath, URL } from 'node:url';
 const outDir = fileURLToPath(new URL('../public/icons/', import.meta.url));
 
 /**
- * Ein geometrisches „P" – Stamm plus Ring, aus drei einfachen Formen gebaut
- * statt aus einem echten Schriftzeichen. Ein Textglyph würde beim Rastern in
- * mehreren Größen (60 px bis 512 px) je nach Schriftrendering unterschiedlich
- * scharf oder unterschiedlich dick wirken; feste Formen bleiben in jeder
- * Größe exakt gleich. Durchgehend abgerundete Ecken, dieselbe Formsprache
- * wie der Rest der App. Reines Weiß auf Schwarz, kein Farbakzent – bewusst
- * anders als das Logbuch-Icon (dort: drei Balken), damit beide Apps auf
- * demselben Home-Bildschirm klar auseinanderzuhalten sind.
+ * Eine vereinfachte Hantelstange, aus drei einfachen Formen gebaut: zwei
+ * hochkant stehende Scheiben, eine Stange dazwischen. Passt zu einer
+ * Coaching-App, ohne wie das Logbuch-Icon (dort: drei aufsteigende Balken)
+ * auszusehen – beide Apps landen auf demselben Home-Bildschirm und sollen
+ * sich klar unterscheiden. Dieselben Formen stecken auch in
+ * `src/components/AppMark.tsx`, die denselben Zug im Startbild und in der
+ * Anmeldemaske der App selbst zeigt – ändert sich die Form hier, muss sie
+ * dort von Hand mitgezogen werden.
  */
 const motiv = `
-  <rect x="156" y="120" width="80" height="272" rx="40" fill="#FFFFFF"/>
-  <rect x="156" y="120" width="200" height="168" rx="84" fill="#FFFFFF"/>
-  <rect x="236" y="164" width="76" height="80" rx="38" fill="#000000"/>`;
+  <rect x="72" y="132" width="64" height="248" rx="32" fill="#FFFFFF"/>
+  <rect x="376" y="132" width="64" height="248" rx="32" fill="#FFFFFF"/>
+  <rect x="96" y="236" width="320" height="40" rx="20" fill="#FFFFFF"/>`;
 
 /** Normales Icon: randlos, volle Fläche. */
 const icon = (size) => `
