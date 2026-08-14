@@ -1,0 +1,25 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Einseiten-App: jede Adresse muss auf index.html zeigen, sonst läuft ein
+# Neuladen auf einer Unterseite (z. B. /coach/kunden) in einen 404.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Die gebauten Dateien tragen einen Hash im Namen und dürfen dauerhaft
+# im Cache bleiben; index.html selbst nie, sonst sieht niemand Neuerungen.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"

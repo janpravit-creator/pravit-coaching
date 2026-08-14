@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PRAVIT Coaching">
+  <rect width="512" height="512" rx="112" fill="#0A0A0A" />
+  <!-- Aufsteigende Balken: der Fortschritt, um den sich das Coaching dreht. -->
+  <rect x="118" y="300" width="68" height="104" rx="26" fill="#FFFFFF" opacity="0.55" />
+  <rect x="222" y="238" width="68" height="166" rx="26" fill="#FFFFFF" opacity="0.8" />
+  <rect x="326" y="140" width="68" height="264" rx="26" fill="#34B857" />
+</svg>

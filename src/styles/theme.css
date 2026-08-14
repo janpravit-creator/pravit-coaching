@@ -1,0 +1,348 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+   Design-Tokens.
+   Die Werte stammen aus den Screenshot-Vorlagen: heller, fast weißer Grund,
+   reinweiße Karten mit großem Radius und sehr weichem Schatten, schwarze
+   Typo, grauer Sekundärtext, Grün/Rot als einzige Akzente.
+   Light-First; das Dark-Theme spiegelt dieselben Rollen.
+--------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+
+  /* Flächen */
+  --c-page: #f2f3f5;
+  --c-surface: #ffffff;
+  --c-surface-muted: #eef0f4;
+  --c-surface-sunken: #e6e9ee;
+  --c-line: #e3e6ea;
+  --c-line-strong: #d2d7de;
+
+  /* Text */
+  --c-text: #0a0a0a;
+  --c-text-muted: #8f959e;
+  --c-text-subtle: #b4bac2;
+  --c-text-inverted: #ffffff;
+
+  /* Semantik */
+  --c-positive: #34b857;
+  --c-positive-soft: #e6f6ea;
+  --c-negative: #e5484d;
+  --c-negative-soft: #fdecec;
+  --c-warning: #e8a33d;
+  --c-warning-soft: #fdf3e4;
+  --c-info: #3b7ddd;
+  --c-info-soft: #eaf1fc;
+
+  /* Aktion – der schwarze Pill-Button aus den Vorlagen */
+  --c-action: #0a0a0a;
+  --c-action-text: #ffffff;
+
+  /* Overlay hinter Bottom-Sheets */
+  --c-backdrop: rgb(0 0 0 / 0.28);
+
+  /* Schatten – sehr weich, kaum sichtbar, nur Abhebung */
+  --sh-card: 0 2px 12px rgb(0 0 0 / 0.05);
+  --sh-raised: 0 6px 24px rgb(0 0 0 / 0.09);
+  --sh-sheet: 0 -8px 40px rgb(0 0 0 / 0.14);
+  --sh-action: 0 6px 20px rgb(0 0 0 / 0.22);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --c-page: #0b0b0c;
+  --c-surface: #161719;
+  --c-surface-muted: #202225;
+  --c-surface-sunken: #0f1011;
+  --c-line: #2a2c30;
+  --c-line-strong: #3a3d42;
+
+  --c-text: #f5f6f7;
+  --c-text-muted: #8b9098;
+  --c-text-subtle: #61666d;
+  --c-text-inverted: #0a0a0a;
+
+  --c-positive: #3ecb64;
+  --c-positive-soft: #14301c;
+  --c-negative: #ff6167;
+  --c-negative-soft: #351718;
+  --c-warning: #f0b355;
+  --c-warning-soft: #33270f;
+  --c-info: #5c9bff;
+  --c-info-soft: #131f33;
+
+  --c-action: #f5f6f7;
+  --c-action-text: #0a0a0a;
+
+  --c-backdrop: rgb(0 0 0 / 0.55);
+
+  --sh-card: 0 2px 12px rgb(0 0 0 / 0.4);
+  --sh-raised: 0 6px 24px rgb(0 0 0 / 0.5);
+  --sh-sheet: 0 -8px 40px rgb(0 0 0 / 0.6);
+  --sh-action: 0 6px 20px rgb(0 0 0 / 0.5);
+}
+
+/* ---------------------------------------------------------------------------
+   Diagramm-Farben.
+
+   Kategorial wird nach *Körperregion* eingefärbt, nicht nach einzelner
+   Muskelgruppe. Dreizehn unterscheidbare Farben gibt es nicht – bei so vielen
+   Kategorien rücken die Farbtöne so eng zusammen, dass sie schon mit normalem
+   Farbsehen kaum noch auseinanderzuhalten sind, mit einer Farbsehschwäche gar
+   nicht mehr. Sechs Regionen sind sicher trennbar, und welcher Muskel genau
+   gemeint ist, steht ohnehin immer als Text daneben.
+
+   Die sechs Töne sind mit dem Validator geprüft (Helligkeitsband, Sättigung,
+   Abstand bei Protanopie/Deuteranopie/Tritanopie) – hell wie dunkel bestanden.
+   Drei Töne liegen im Hellmodus unter 3:1 Kontrast; deshalb tragen alle
+   Diagramme sichtbare Beschriftungen statt reiner Farbcodierung.
+--------------------------------------------------------------------------- */
+
+:root {
+  --c-region-brust: #2a78d6;
+  --c-region-ruecken: #eb6834;
+  --c-region-schultern: #1baf7a;
+  --c-region-arme: #eda100;
+  --c-region-beine: #e87ba4;
+  --c-region-rumpf: #4a3aa7;
+
+  /* Sequenzielle Rampe für Magnitude: ein Farbton, hell nach dunkel.
+     Trägt Blasen-Diagramm und Kalender-Heatmap. */
+  --c-ramp-1: #e3edfb;
+  --c-ramp-2: #bcd6f6;
+  --c-ramp-3: #8ab6ee;
+  --c-ramp-4: #5590e2;
+  --c-ramp-5: #2a78d6;
+}
+
+:root[data-theme='dark'] {
+  /* Dieselben sechs Töne, für den dunklen Grund neu abgestuft – keine
+     automatische Umkehr, sondern eine eigens geprüfte Auswahl. */
+  --c-region-brust: #3987e5;
+  --c-region-ruecken: #d95926;
+  --c-region-schultern: #199e70;
+  --c-region-arme: #c98500;
+  --c-region-beine: #d55181;
+  --c-region-rumpf: #9085e9;
+
+  --c-ramp-1: #16283d;
+  --c-ramp-2: #1d3d61;
+  --c-ramp-3: #245a8c;
+  --c-ramp-4: #2d76b8;
+  --c-ramp-5: #3987e5;
+}
+
+@theme inline {
+  /* Farben als Tailwind-Utilities: bg-surface, text-muted, border-line … */
+  --color-page: var(--c-page);
+  --color-surface: var(--c-surface);
+  --color-surface-muted: var(--c-surface-muted);
+  --color-surface-sunken: var(--c-surface-sunken);
+  --color-line: var(--c-line);
+  --color-line-strong: var(--c-line-strong);
+
+  --color-text: var(--c-text);
+  --color-muted: var(--c-text-muted);
+  --color-subtle: var(--c-text-subtle);
+  --color-inverted: var(--c-text-inverted);
+
+  --color-positive: var(--c-positive);
+  --color-positive-soft: var(--c-positive-soft);
+  --color-negative: var(--c-negative);
+  --color-negative-soft: var(--c-negative-soft);
+  --color-warning: var(--c-warning);
+  --color-warning-soft: var(--c-warning-soft);
+  --color-info: var(--c-info);
+  --color-info-soft: var(--c-info-soft);
+
+  --color-action: var(--c-action);
+  --color-action-text: var(--c-action-text);
+
+  /* Radien – die Vorlagen nutzen durchgehend sehr runde Karten */
+  --radius-card: 22px;
+  --radius-tile: 16px;
+  --radius-field: 14px;
+  --radius-sheet: 28px;
+
+  --shadow-card: var(--sh-card);
+  --shadow-raised: var(--sh-raised);
+  --shadow-sheet: var(--sh-sheet);
+  --shadow-action: var(--sh-action);
+
+  /* Schrift: auf dem iPhone rendert das als SF Pro – exakt wie die Vorlagen */
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue',
+    system-ui, sans-serif;
+  --font-numeric: var(--font-sans);
+}
+
+/* ---------------------------------------------------------------------------
+   Basis
+--------------------------------------------------------------------------- */
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--c-page);
+  color: var(--c-text);
+  font-family: var(--font-sans);
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  /* Kein Gummiband-Scrollen der ganzen Seite – nur Container scrollen. */
+  overscroll-behavior-y: none;
+}
+
+/* Zahlen in Tabellen und Timern dürfen nicht springen. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* Eingaben nie unter 16px – sonst zoomt iOS Safari beim Fokus hinein. */
+input,
+textarea,
+select {
+  font-size: 16px;
+  font-family: inherit;
+}
+
+/* Horizontale Chip-Reihen wie „Beliebt" in der Vorlage */
+.scroll-x {
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll-x::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Safe-Area-Helfer für Notch und Home-Indicator */
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ---------------------------------------------------------------------------
+   Schieberegler.
+   Das native Element folgt dem Finger zuverlässiger als jede Nachbildung,
+   lässt sich aber nur über Hersteller-Pseudoelemente gestalten. `--fill` wird
+   von der Komponente gesetzt und färbt den zurückgelegten Teil der Bahn ein.
+--------------------------------------------------------------------------- */
+
+.lb-slider {
+  --fill: 50%;
+  appearance: none;
+  height: 28px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.lb-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--c-text) 0%,
+    var(--c-text) var(--fill),
+    var(--c-surface-sunken) var(--fill),
+    var(--c-surface-sunken) 100%
+  );
+}
+
+.lb-slider::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--c-surface-sunken);
+}
+
+.lb-slider::-moz-range-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--c-text);
+}
+
+.lb-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 26px;
+  height: 26px;
+  margin-top: -10px;
+  border: none;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow:
+    0 1px 4px rgb(0 0 0 / 0.2),
+    0 0 0 0.5px rgb(0 0 0 / 0.08);
+}
+
+.lb-slider::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.2);
+}
+
+.lb-slider:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--c-info);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Drucken
+ *
+ * Die Rechnung ist das einzige, was je gedruckt wird. Beim Druck bleibt
+ * `.print-bereich` stehen, alles andere verschwindet – sonst landeten
+ * Tab-Leiste, Sheet-Rand und abgedunkelter Hintergrund mit auf dem Papier.
+ * ------------------------------------------------------------------ */
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-bereich,
+  .print-bereich * {
+    visibility: visible;
+  }
+
+  .print-bereich {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+}
