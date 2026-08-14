@@ -91,8 +91,8 @@ export default function PaymentsPage() {
             }}
             className={
               m === monat
-                ? 'shrink-0 rounded-2xl bg-action px-4 py-2.5 text-[14px] font-bold text-[var(--c-action-text)]'
-                : 'shrink-0 rounded-2xl bg-surface px-4 py-2.5 text-[14px] font-bold shadow-card'
+                ? 'shrink-0 rounded-2xl bg-surface px-4 py-2.5 text-[14px] font-bold shadow-card ring-2 ring-text transition-shadow'
+                : 'shrink-0 rounded-2xl bg-surface px-4 py-2.5 text-[14px] font-bold shadow-card transition-shadow'
             }
           >
             {monatLabel(m)}

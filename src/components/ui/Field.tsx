@@ -136,18 +136,13 @@ export function OptionGrid<T extends string>({
               key={option.value}
               onClick={() => onChange(option.value)}
               className={cn(
-                'rounded-[var(--radius-field)] px-3 py-3 text-left transition-colors',
-                active ? 'bg-action text-[var(--c-action-text)]' : 'bg-surface-muted text-text',
+                'rounded-[var(--radius-field)] bg-surface-muted px-3 py-3 text-left text-text transition-shadow',
+                active && 'ring-2 ring-text',
               )}
             >
               <div className="text-[15px] font-bold tracking-tight">{option.label}</div>
               {option.description && (
-                <div
-                  className={cn(
-                    'mt-0.5 text-[12px] leading-snug',
-                    active ? 'opacity-70' : 'text-muted',
-                  )}
-                >
+                <div className="mt-0.5 text-[12px] leading-snug text-muted">
                   {option.description}
                 </div>
               )}

@@ -296,9 +296,9 @@ export function Chip({
       whileTap={{ scale: 0.95 }}
       onClick={onClick}
       className={cn(
-        'inline-flex shrink-0 items-center gap-2 rounded-2xl px-4 py-3',
-        'text-[15px] font-bold tracking-tight whitespace-nowrap transition-colors',
-        active ? 'bg-action text-[var(--c-action-text)]' : 'bg-surface text-text shadow-card',
+        'inline-flex shrink-0 items-center gap-2 rounded-2xl bg-surface px-4 py-3 text-text shadow-card',
+        'text-[15px] font-bold tracking-tight whitespace-nowrap transition-shadow',
+        active && 'ring-2 ring-text',
         className,
       )}
     >

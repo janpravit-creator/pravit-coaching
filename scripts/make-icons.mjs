@@ -7,27 +7,31 @@ import { fileURLToPath, URL } from 'node:url';
 const outDir = fileURLToPath(new URL('../public/icons/', import.meta.url));
 
 /**
- * Das Zeichen ist ein „P" aus drei aufsteigenden Balken – dieselbe Formsprache
- * wie in der App. Bewusst schwarz-weiß statt im alten Stempel-Rot: Die
- * Oberfläche trägt dieses Rot nicht mehr, und ein Icon, das anders aussieht
- * als die App dahinter, wirkt wie eine Fremdanwendung.
+ * Ein geometrisches „P" – Stamm plus Ring, aus drei einfachen Formen gebaut
+ * statt aus einem echten Schriftzeichen. Ein Textglyph würde beim Rastern in
+ * mehreren Größen (60 px bis 512 px) je nach Schriftrendering unterschiedlich
+ * scharf oder unterschiedlich dick wirken; feste Formen bleiben in jeder
+ * Größe exakt gleich. Durchgehend abgerundete Ecken, dieselbe Formsprache
+ * wie der Rest der App. Reines Weiß auf Schwarz, kein Farbakzent – bewusst
+ * anders als das Logbuch-Icon (dort: drei Balken), damit beide Apps auf
+ * demselben Home-Bildschirm klar auseinanderzuhalten sind.
  */
 const motiv = `
-  <rect x="118" y="300" width="68" height="104" rx="26" fill="#FFFFFF" opacity="0.55"/>
-  <rect x="222" y="238" width="68" height="166" rx="26" fill="#FFFFFF" opacity="0.8"/>
-  <rect x="326" y="140" width="68" height="264" rx="26" fill="#34B857"/>`;
+  <rect x="156" y="120" width="80" height="272" rx="40" fill="#FFFFFF"/>
+  <rect x="156" y="120" width="200" height="168" rx="84" fill="#FFFFFF"/>
+  <rect x="236" y="164" width="76" height="80" rx="38" fill="#000000"/>`;
 
 /** Normales Icon: randlos, volle Fläche. */
 const icon = (size) => `
 <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#0A0A0A"/>
+  <rect width="512" height="512" rx="112" fill="#000000"/>
   ${motiv}
 </svg>`;
 
 /** Maskable: Motiv auf ~62 % geschrumpft, damit es jeder Zuschnitt überlebt. */
 const maskable = (size) => `
 <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="#0A0A0A"/>
+  <rect width="512" height="512" fill="#000000"/>
   <g transform="translate(256 256) scale(0.62) translate(-256 -256)">${motiv}</g>
 </svg>`;
 

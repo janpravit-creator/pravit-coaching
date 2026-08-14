@@ -4,6 +4,7 @@ import { IconArrowRight, IconCheck, IconChevronLeft } from '@/components/icons';
 import { PrimaryButton, SecondaryButton, TextButton } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Toggle } from '@/components/ui/Controls';
+import { DateField } from '@/components/ui/DateField';
 import { OptionGrid, TextArea, TextField } from '@/components/ui/Field';
 import { PageHeader, ProgressBar, Screen } from '@/components/ui/Layout';
 import { Sheet } from '@/components/ui/Sheet';
@@ -184,7 +185,7 @@ export default function RegisterPage({ nurProfil = false }: { nurProfil?: boolea
             <TextField label="Vorname" value={f.vn} onChange={(v) => setze({ vn: v })} placeholder="Max" />
             <TextField label="Nachname" value={f.nn} onChange={(v) => setze({ nn: v })} placeholder="Mustermann" />
             <TextField label="Telefon" type="tel" inputMode="tel" value={f.tel} onChange={(v) => setze({ tel: v })} placeholder="optional" />
-            <TextField label="Geburtsdatum" type="date" value={f.geb} onChange={(v) => setze({ geb: v })} />
+            <DateField label="Geburtsdatum" value={f.geb} onChange={(v) => setze({ geb: v })} />
             <OptionGrid
               label="Geschlecht"
               value={f.sex}
@@ -255,8 +256,8 @@ export default function RegisterPage({ nurProfil = false }: { nurProfil?: boolea
                 <button
                   key={key}
                   onClick={() => setze({ paket: key })}
-                  className={`flex w-full items-center justify-between gap-3 rounded-[var(--radius-card)] px-4 py-4 text-left transition-colors ${
-                    aktivPaket ? 'bg-action text-[var(--c-action-text)]' : 'bg-surface-muted'
+                  className={`flex w-full items-center justify-between gap-3 rounded-[var(--radius-card)] bg-surface-muted px-4 py-4 text-left transition-shadow ${
+                    aktivPaket ? 'ring-2 ring-text' : ''
                   }`}
                 >
                   <span className="text-[16px] font-bold tracking-tight">{paket.name}</span>

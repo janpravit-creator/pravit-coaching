@@ -3,6 +3,7 @@ import { IconCheck, IconChevronRight, IconNote } from '@/components/icons';
 import { PrimaryButton } from '@/components/ui/Button';
 import { Card, Divider, ListRow, Section } from '@/components/ui/Card';
 import { Slider } from '@/components/ui/Controls';
+import { DateField } from '@/components/ui/DateField';
 import { TextArea, TextField } from '@/components/ui/Field';
 import { EmptyState, PageHeader, Pill, Screen } from '@/components/ui/Layout';
 import { Sheet } from '@/components/ui/Sheet';
@@ -123,7 +124,7 @@ export default function CheckinPage() {
 
       <Section title="Diese Woche">
         <Card>
-          <TextField label="Datum" type="date" value={f.datum} onChange={(v) => setze({ datum: v })} />
+          <DateField label="Datum" value={f.datum} onChange={(v) => setze({ datum: v })} />
           <TextField
             label="Gewicht"
             inputMode="decimal"

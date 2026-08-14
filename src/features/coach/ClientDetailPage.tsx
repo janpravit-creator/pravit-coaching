@@ -15,6 +15,7 @@ import { PrimaryButton, SecondaryButton, TextButton } from '@/components/ui/Butt
 import { Card, Divider, ListRow, Section, StatTile } from '@/components/ui/Card';
 import { ConfirmSheet, useConfirm } from '@/components/ui/Confirm';
 import { PillTabs } from '@/components/ui/Controls';
+import { DateField } from '@/components/ui/DateField';
 import { OptionGrid, TextArea, TextField } from '@/components/ui/Field';
 import { EmptyState, PageHeader, Pill, Screen } from '@/components/ui/Layout';
 import { Sheet } from '@/components/ui/Sheet';
@@ -770,7 +771,7 @@ function Profil({ client, onGeaendert }: { client: Client; onGeaendert: () => vo
               value={preis}
               onChange={setPreis}
             />
-            <TextField label="Startdatum" type="date" value={startDatum} onChange={setStartDatum} />
+            <DateField label="Startdatum" value={startDatum} onChange={setStartDatum} />
           </div>
           <div className="mt-2">
             <PrimaryButton
