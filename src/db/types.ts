@@ -58,14 +58,35 @@ export interface TrainingPlan {
  * Ernährungsplan
  * ------------------------------------------------------------------ */
 
+/**
+ * Bezugsgröße der hinterlegten Nährwerte.
+ *
+ * `100g` – die Werte gelten je 100 Gramm und skalieren mit der Menge.
+ * `stueck` – die Werte gelten je Stück und werden mit der Anzahl multipliziert.
+ */
+export type NaehrwertBasis = '100g' | 'stueck';
+
+/**
+ * Ein Lebensmittel in einer Mahlzeit.
+ *
+ * **Zu den Feldnamen:** Die Nährwerte liegen als *Bezugswerte* vor
+ * (`kcalPer100` und Geschwister), nicht als fertige Werte für die eingetragene
+ * Menge – genau so, wie die bisherige App sie geschrieben hat. Daraus rechnet
+ * `makrosEinesLebensmittels` in `domain/lebensmittel.ts` den tatsächlichen
+ * Beitrag aus. `amount` ist der frei getippte Text („150g", „2 Stück"),
+ * `grams` die daraus gezogene Zahl, mit der gerechnet wird.
+ */
 export interface MealFood {
   name: string;
-  /** Menge als freier Text, z. B. „150 g" oder „1 Portion". */
+  /** Menge als freier Text, z. B. „150 g" oder „2 Stück". */
   amount?: string;
-  kcal?: string | number;
-  prot?: string | number;
-  fat?: string | number;
-  carbs?: string | number;
+  /** Die Zahl aus `amount` – Gramm bei Basis `100g`, Stückzahl bei `stueck`. */
+  grams?: string | number;
+  basis?: NaehrwertBasis;
+  kcalPer100?: string | number;
+  protPer100?: string | number;
+  fatPer100?: string | number;
+  carbsPer100?: string | number;
 }
 
 export interface Meal {

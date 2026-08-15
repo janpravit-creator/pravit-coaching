@@ -65,19 +65,42 @@ describe('Ernährung', () => {
   });
 
   it('rechnet aus den Lebensmitteln, wenn die Mahlzeit keine Summe trägt', () => {
+    // Lebensmittel tragen ihre Werte als Bezugsgröße je 100 g, nicht als
+    // fertige Zahl – erst die Menge entscheidet, was davon ankommt.
     const plan = {
       name: 'Tag B',
       meals: [
         {
           name: 'Snack',
           foods: [
-            { name: 'Quark', kcal: '150', prot: '25', fat: '1', carbs: '6' },
-            { name: 'Banane', kcal: '90', prot: '1', fat: '0', carbs: '22' },
+            {
+              name: 'Magerquark',
+              amount: '250g',
+              grams: '250',
+              basis: '100g' as const,
+              kcalPer100: '60',
+              protPer100: '10',
+              fatPer100: '0.4',
+              carbsPer100: '2.4',
+            },
+            {
+              name: 'Banane',
+              amount: '120g',
+              grams: '120',
+              basis: '100g' as const,
+              kcalPer100: '90',
+              protPer100: '1',
+              fatPer100: '0',
+              carbsPer100: '22',
+            },
           ],
         },
       ],
     };
-    expect(makrosEinesPlans(plan)).toEqual({ kcal: 240, prot: 26, fat: 1, carbs: 28 });
+    const m = makrosEinesPlans(plan);
+    expect(m.kcal).toBeCloseTo(150 + 108);
+    expect(m.prot).toBeCloseTo(25 + 1.2);
+    expect(m.carbs).toBeCloseTo(6 + 26.4);
   });
 });
 

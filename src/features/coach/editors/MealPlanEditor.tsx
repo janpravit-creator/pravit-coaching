@@ -1,11 +1,20 @@
 import { useState } from 'react';
-import { IconChevronDown, IconCopy, IconPlus, IconTrash } from '@/components/icons';
+import { IconChevronDown, IconCopy, IconPlus, IconSearch, IconTrash } from '@/components/icons';
 import { IconButton, SecondaryButton, TextButton } from '@/components/ui/Button';
 import { Card, Divider, StatTile } from '@/components/ui/Card';
 import { TextField } from '@/components/ui/Field';
 import { SortableList } from '@/components/ui/Sortable';
 import type { Meal, MealFood, MealPlan } from '@/db/types';
-import { makrosEinerMahlzeit, makrosEinesPlans } from '@/domain/nutrition';
+import { makrosEinerMahlzeit, makrosEinesPlans, zahl } from '@/domain/nutrition';
+import {
+  alsMahlzeitFelder,
+  anzahlBerechenbar,
+  hatNaehrwerte,
+  makrosAusLebensmitteln,
+  makrosEinesLebensmittels,
+  mengeAusText,
+} from '@/domain/lebensmittel';
+import { FoodSearchSheet } from './FoodSearchSheet';
 import { cn } from '@/lib/cn';
 
 /**
@@ -215,6 +224,11 @@ function MahlzeitenEditor({
                     onChange={(foods) => setzeMahlzeit(index, { ...meal, foods })}
                     namen={lebensmittelNamen}
                   />
+
+                  <MahlzeitSummen
+                    meal={meal}
+                    onChange={(patch) => setzeMahlzeit(index, { ...meal, ...patch })}
+                  />
                 </div>
               )}
             </div>
@@ -252,8 +266,21 @@ function LebensmittelEditor({
   onChange: (foods: MealFood[]) => void;
   namen: string[];
 }) {
+  const [sucheFuer, setSucheFuer] = useState<number | 'neu' | null>(null);
+
   const setze = (index: number, patch: Partial<MealFood>) =>
     onChange(foods.map((f, i) => (i === index ? { ...f, ...patch } : f)));
+
+  /**
+   * Die Menge wird als freier Text getippt („150g", „2 Stück"). Damit sofort
+   * mitgerechnet werden kann, wandert die Zahl daraus bei jedem Tastendruck
+   * ins Feld `grams` – sonst müsste man das Lebensmittel neu suchen, nur weil
+   * sich die Menge geändert hat.
+   */
+  const setzeMenge = (index: number, amount: string) => {
+    const zahlDarin = mengeAusText(amount);
+    setze(index, { amount, grams: zahlDarin === null ? '' : String(zahlDarin) });
+  };
 
   return (
     <div className="py-2">
@@ -263,70 +290,83 @@ function LebensmittelEditor({
         items={foods.map((food, index) => ({ food, index }))}
         getId={({ index }) => `essen-${index}`}
         onReorder={(neu) => onChange(neu.map(({ food }) => food))}
-        renderItem={({ food, index }, handle, isDragging) => (
-          <div
-            className={cn(
-              'flex items-start gap-1 rounded-2xl bg-surface px-1.5 py-1',
-              isDragging && 'shadow-card',
-              index > 0 && 'mt-1.5',
-            )}
-          >
-            <div className="pt-2">{handle}</div>
+        renderItem={({ food, index }, handle, isDragging) => {
+          const eigene = makrosEinesLebensmittels(food);
+          const rechenbar = hatNaehrwerte(food);
+          const stueck = food.basis === 'stueck';
 
-            <div className="min-w-0 flex-1 py-1">
-              <input
-                value={food.name}
-                list="lebensmittel-vorschlaege"
-                onChange={(e) => setze(index, { name: e.target.value })}
-                placeholder="Lebensmittel"
-                aria-label={`Lebensmittel ${index + 1}`}
-                className="w-full bg-transparent text-[15px] font-semibold outline-none placeholder:text-subtle"
-              />
-              <div className="mt-1 grid grid-cols-5 gap-1.5">
-                <input
-                  value={food.amount ?? ''}
-                  onChange={(e) => setze(index, { amount: e.target.value })}
-                  placeholder="Menge"
-                  aria-label={`Menge für Lebensmittel ${index + 1}`}
-                  className="col-span-2 min-w-0 rounded-lg bg-surface-muted px-2 py-1.5 text-[14px] outline-none placeholder:text-subtle"
-                />
-                <input
-                  value={food.kcal ?? ''}
-                  inputMode="numeric"
-                  onChange={(e) => setze(index, { kcal: e.target.value })}
-                  placeholder="kcal"
-                  aria-label={`Kalorien für Lebensmittel ${index + 1}`}
-                  className="min-w-0 rounded-lg bg-surface-muted px-2 py-1.5 text-[14px] outline-none placeholder:text-subtle"
-                />
-                <input
-                  value={food.prot ?? ''}
-                  inputMode="numeric"
-                  onChange={(e) => setze(index, { prot: e.target.value })}
-                  placeholder="P"
-                  aria-label={`Protein für Lebensmittel ${index + 1}`}
-                  className="min-w-0 rounded-lg bg-surface-muted px-2 py-1.5 text-[14px] outline-none placeholder:text-subtle"
-                />
-                <input
-                  value={food.carbs ?? ''}
-                  inputMode="numeric"
-                  onChange={(e) => setze(index, { carbs: e.target.value })}
-                  placeholder="KH"
-                  aria-label={`Kohlenhydrate für Lebensmittel ${index + 1}`}
-                  className="min-w-0 rounded-lg bg-surface-muted px-2 py-1.5 text-[14px] outline-none placeholder:text-subtle"
-                />
-              </div>
-            </div>
-
-            <IconButton
-              label={`Lebensmittel ${index + 1} entfernen`}
-              variant="blank"
-              className="mt-1"
-              onClick={() => onChange(foods.filter((_, i) => i !== index))}
+          return (
+            <div
+              className={cn(
+                'flex items-start gap-1 rounded-2xl bg-surface px-1.5 py-1',
+                isDragging && 'shadow-card',
+                index > 0 && 'mt-1.5',
+              )}
             >
-              <IconTrash size={16} />
-            </IconButton>
-          </div>
-        )}
+              <div className="pt-2">{handle}</div>
+
+              <div className="min-w-0 flex-1 py-1">
+                <div className="flex items-center gap-1">
+                  <input
+                    value={food.name}
+                    list="lebensmittel-vorschlaege"
+                    onChange={(e) => setze(index, { name: e.target.value })}
+                    placeholder="Lebensmittel"
+                    aria-label={`Lebensmittel ${index + 1}`}
+                    className="min-w-0 flex-1 bg-transparent text-[15px] font-semibold outline-none placeholder:text-subtle"
+                  />
+                  <IconButton
+                    label={`Nährwerte für Lebensmittel ${index + 1} suchen`}
+                    variant="blank"
+                    onClick={() => setSucheFuer(index)}
+                  >
+                    <IconSearch size={16} />
+                  </IconButton>
+                </div>
+
+                <div className="mt-1 flex items-center gap-1.5">
+                  <input
+                    value={food.amount ?? ''}
+                    onChange={(e) => setzeMenge(index, e.target.value)}
+                    placeholder={stueck ? 'z. B. 2 Stück' : 'z. B. 150g'}
+                    aria-label={`Menge für Lebensmittel ${index + 1}`}
+                    className="w-28 min-w-0 rounded-lg bg-surface-muted px-2 py-1.5 text-[14px] outline-none placeholder:text-subtle"
+                  />
+
+                  {rechenbar ? (
+                    <span className="tnum min-w-0 flex-1 truncate text-[13px] text-muted">
+                      {Math.round(eigene.kcal)} kcal · P {Math.round(eigene.prot)} · F{' '}
+                      {Math.round(eigene.fat)} · KH {Math.round(eigene.carbs)}
+                    </span>
+                  ) : (
+                    <button
+                      onClick={() => setSucheFuer(index)}
+                      className="min-w-0 flex-1 truncate text-left text-[13px] text-subtle underline decoration-dotted underline-offset-2"
+                    >
+                      Keine Nährwerte — suchen
+                    </button>
+                  )}
+                </div>
+
+                {rechenbar && (
+                  <div className="mt-1 text-[11px] text-subtle">
+                    {Math.round(zahl(food.kcalPer100))} kcal{' '}
+                    {stueck ? 'je Stück' : 'je 100 g'}
+                  </div>
+                )}
+              </div>
+
+              <IconButton
+                label={`Lebensmittel ${index + 1} entfernen`}
+                variant="blank"
+                className="mt-1"
+                onClick={() => onChange(foods.filter((_, i) => i !== index))}
+              >
+                <IconTrash size={16} />
+              </IconButton>
+            </div>
+          );
+        }}
       />
 
       <datalist id="lebensmittel-vorschlaege">
@@ -335,14 +375,127 @@ function LebensmittelEditor({
         ))}
       </datalist>
 
-      <div className="mt-2">
+      <div className="mt-2 flex flex-wrap gap-3">
+        <TextButton onClick={() => setSucheFuer('neu')}>
+          <span className="inline-flex items-center gap-1.5">
+            <IconSearch size={16} />
+            Lebensmittel suchen
+          </span>
+        </TextButton>
         <TextButton onClick={() => onChange([...foods, { name: '', amount: '' }])}>
           <span className="inline-flex items-center gap-1.5">
             <IconPlus size={16} />
-            Lebensmittel hinzufügen
+            Leere Zeile
           </span>
         </TextButton>
       </div>
+
+      {sucheFuer !== null && (
+        <FoodSearchSheet
+          startwert={typeof sucheFuer === 'number' ? (foods[sucheFuer]?.name ?? '') : ''}
+          onUebernehmen={(neu) => {
+            if (sucheFuer === 'neu') onChange([...foods, neu]);
+            else onChange(foods.map((f, i) => (i === sucheFuer ? { ...f, ...neu } : f)));
+          }}
+          onClose={() => setSucheFuer(null)}
+        />
+      )}
     </div>
+  );
+}
+
+/* ------------------------------------------------------------------ *
+ * Summen einer Mahlzeit
+ * ------------------------------------------------------------------ */
+
+/**
+ * Die Summenfelder der Mahlzeit – und der Knopf, der sie aus den
+ * Lebensmitteln füllt.
+ *
+ * Die Felder bleiben von Hand änderbar: Nicht jede Mahlzeit lässt sich aus
+ * Lebensmitteln herleiten, und ein gesetzter Wert soll nicht stillschweigend
+ * überschrieben werden. Deshalb rechnet die App nur vor und übernimmt erst auf
+ * Knopfdruck.
+ */
+function MahlzeitSummen({
+  meal,
+  onChange,
+}: {
+  meal: Meal;
+  onChange: (patch: Partial<Meal>) => void;
+}) {
+  const foods = meal.foods ?? [];
+  const ausLebensmitteln = makrosAusLebensmitteln(foods);
+  const berechenbar = anzahlBerechenbar(foods);
+
+  const gesetzt =
+    zahl(meal.kcal) > 0 || zahl(meal.prot) > 0 || zahl(meal.fat) > 0 || zahl(meal.carbs) > 0;
+  const weichtAb = gesetzt && Math.abs(zahl(meal.kcal) - ausLebensmitteln.kcal) >= 1;
+
+  return (
+    <div className="mt-3 rounded-2xl bg-surface px-3 py-3">
+      <div className="mb-2 flex items-baseline justify-between gap-2">
+        <span className="text-[14px] font-semibold text-muted">Summe der Mahlzeit</span>
+        {berechenbar > 0 && (
+          <span className="tnum text-[13px] text-subtle">
+            aus {berechenbar} Lebensmittel{berechenbar === 1 ? '' : 'n'}:{' '}
+            {Math.round(ausLebensmitteln.kcal)} kcal
+          </span>
+        )}
+      </div>
+
+      <div className="grid grid-cols-4 gap-1.5">
+        <SummenFeld label="kcal" value={meal.kcal} onChange={(kcal) => onChange({ kcal })} />
+        <SummenFeld label="P" value={meal.prot} onChange={(prot) => onChange({ prot })} />
+        <SummenFeld label="F" value={meal.fat} onChange={(fat) => onChange({ fat })} />
+        <SummenFeld label="KH" value={meal.carbs} onChange={(carbs) => onChange({ carbs })} />
+      </div>
+
+      {berechenbar > 0 && (
+        <div className="mt-2.5">
+          <SecondaryButton
+            block
+            onClick={() => onChange(alsMahlzeitFelder(ausLebensmitteln))}
+          >
+            Σ Nährwerte berechnen
+          </SecondaryButton>
+          {weichtAb && (
+            <p className="mt-1.5 px-1 text-[12px] text-muted">
+              Die eingetragene Summe weicht von den Lebensmitteln ab. Der Knopf überschreibt sie.
+            </p>
+          )}
+        </div>
+      )}
+
+      {berechenbar === 0 && foods.length > 0 && (
+        <p className="mt-2 px-1 text-[12px] text-muted">
+          Noch kein Lebensmittel mit hinterlegten Nährwerten. Über das Lupen-Symbol suchen, dann
+          lässt sich die Summe berechnen.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function SummenFeld({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string | number | undefined;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1 block text-center text-[11px] font-semibold text-subtle">{label}</span>
+      <input
+        value={value ?? ''}
+        inputMode="numeric"
+        onChange={(e) => onChange(e.target.value)}
+        aria-label={label}
+        className="tnum w-full rounded-lg bg-surface-muted px-2 py-1.5 text-center text-[14px] outline-none"
+      />
+    </label>
   );
 }

@@ -1,4 +1,5 @@
 import type { Meal, MealPlan } from '@/db/types';
+import { makrosAusLebensmitteln } from './lebensmittel';
 
 /**
  * Ernährungsrechnungen: Makros eines Plans und der Kalorienrechner des Coaches.
@@ -24,26 +25,30 @@ export interface Makros {
 
 export const LEERE_MAKROS: Makros = { kcal: 0, prot: 0, fat: 0, carbs: 0 };
 
+/**
+ * Die Makros einer Mahlzeit.
+ *
+ * Ein von Hand eingetragener Wert gewinnt – aber **je Feld**, nicht für alle
+ * vier auf einmal. Viele Mahlzeiten tragen nur `kcal`; würde ein gesetztes
+ * `kcal` die ganze Mahlzeit übernehmen, stünde bei Protein, Fett und
+ * Kohlenhydraten eine Null, obwohl die Lebensmittel es besser wissen.
+ *
+ * Die Lebensmittel tragen ihre Werte als Bezugsgröße (je 100 g bzw. je Stück),
+ * nicht als fertige Zahl – das Umrechnen steckt in `domain/lebensmittel.ts`.
+ */
 export function makrosEinerMahlzeit(meal: Meal): Makros {
-  // Die Mahlzeit trägt ihre Summen selbst; nur wenn sie fehlen, wird aus den
-  // Lebensmitteln gerechnet. So bleiben von Hand gesetzte Werte erhalten.
-  const eigene: Makros = {
-    kcal: zahl(meal.kcal),
-    prot: zahl(meal.prot),
-    fat: zahl(meal.fat),
-    carbs: zahl(meal.carbs),
+  const berechnet = makrosAusLebensmitteln(meal.foods ?? []);
+  const eigenerWert = (gesetzt: unknown, ersatz: number) => {
+    const wert = zahl(gesetzt);
+    return wert > 0 ? wert : ersatz;
   };
-  if (eigene.kcal > 0 || eigene.prot > 0 || eigene.fat > 0 || eigene.carbs > 0) return eigene;
 
-  return (meal.foods ?? []).reduce<Makros>(
-    (sum, food) => ({
-      kcal: sum.kcal + zahl(food.kcal),
-      prot: sum.prot + zahl(food.prot),
-      fat: sum.fat + zahl(food.fat),
-      carbs: sum.carbs + zahl(food.carbs),
-    }),
-    { ...LEERE_MAKROS },
-  );
+  return {
+    kcal: eigenerWert(meal.kcal, berechnet.kcal),
+    prot: eigenerWert(meal.prot, berechnet.prot),
+    fat: eigenerWert(meal.fat, berechnet.fat),
+    carbs: eigenerWert(meal.carbs, berechnet.carbs),
+  };
 }
 
 export function makrosEinesPlans(plan: MealPlan): Makros {

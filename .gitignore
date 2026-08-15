@@ -26,3 +26,4 @@ yarn-error.log*
 
 # Fertiges Bündel für den Netlify-Upload – gehört nicht ins Repository.
 pravit-coaching-dist.zip
+pravit-coaching-src.zip
