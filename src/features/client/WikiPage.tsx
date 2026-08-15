@@ -31,7 +31,12 @@ export default function WikiPage() {
       <PageHeader title="Wiki" subtitle="Das Wichtigste auf einen Blick." />
 
       <div className="scroll-x -mx-5 mb-6 px-5">
-        <PillTabs value={kapitel} onChange={(v) => setKapitel(String(v))} options={optionen} />
+        <PillTabs
+          scrollable
+          value={kapitel}
+          onChange={(v) => setKapitel(String(v))}
+          options={optionen}
+        />
       </div>
 
       {kapitel === 'Übungen' ? (
@@ -155,6 +160,7 @@ function UebungsDatenbank() {
 
       <div className="scroll-x -mx-5 mb-5 px-5">
         <PillTabs
+          scrollable
           value={gruppe}
           onChange={(v) => setGruppe(String(v))}
           options={[

@@ -88,6 +88,7 @@ export default function ProgressPage() {
             <Section title="Übungen">
               <div className="scroll-x -mx-5 mb-3 px-5">
                 <PillTabs
+                  scrollable
                   value={gewaehlt ?? ''}
                   onChange={(v) => setUebung(String(v))}
                   options={uebungen.slice(0, 12).map((name) => ({ value: name, label: name }))}

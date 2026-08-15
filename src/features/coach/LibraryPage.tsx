@@ -83,6 +83,7 @@ function Uebungen() {
 
       <div className="scroll-x -mx-5 mb-5 px-5">
         <PillTabs
+          scrollable
           value={gruppe}
           onChange={(v) => setGruppe(String(v))}
           options={[

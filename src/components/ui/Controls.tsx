@@ -62,16 +62,34 @@ export function PillTabs<T extends string | number>({
   value,
   onChange,
   className,
+  scrollable = false,
 }: {
   options: TabOption<T>[];
   value: T;
   onChange: (value: T) => void;
   className?: string;
+  /**
+   * Für lange Reihen in einem `.scroll-x`-Behälter, etwa den Muskelgruppen-
+   * Filter.
+   *
+   * Ohne dieses Kennzeichen ist die Leiste so breit wie das Sichtfeld, während
+   * die Knöpfe darüber hinauslaufen: Der graue Grund scrollt dann mit und
+   * endet mitten zwischen den Optionen. Mit `w-max` ist er so breit wie sein
+   * Inhalt und trägt alle Optionen; `min-w-full` hält kurze Reihen weiterhin
+   * über die volle Breite.
+   */
+  scrollable?: boolean;
 }) {
   const layoutId = useId();
 
   return (
-    <div className={cn('flex gap-1 rounded-full bg-surface-muted p-1', className)}>
+    <div
+      className={cn(
+        'flex gap-1 rounded-full bg-surface-muted p-1',
+        scrollable && 'w-max min-w-full',
+        className,
+      )}
+    >
       {options.map((option) => {
         const active = option.value === value;
         return (
@@ -79,7 +97,10 @@ export function PillTabs<T extends string | number>({
             key={String(option.value)}
             onClick={() => onChange(option.value)}
             className={cn(
-              'relative flex-1 rounded-full px-3 py-2 text-[14px] font-bold whitespace-nowrap transition-colors',
+              'relative rounded-full px-3 py-2 text-[14px] font-bold whitespace-nowrap transition-colors',
+              // In der Scroll-Reihe zählt die natürliche Breite. `flex-1`
+              // würde jede Option so breit machen wie die längste.
+              scrollable ? 'shrink-0' : 'flex-1',
               active ? 'text-text' : 'text-muted',
             )}
           >
