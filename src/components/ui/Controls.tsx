@@ -212,7 +212,7 @@ export function Slider({
           <span
             className={cn(
               'tnum text-[16px] font-bold',
-              value === null ? 'text-subtle' : tone === 'positiv' ? 'text-positive' : 'text-text',
+              value === null ? 'text-subtle' : tone === 'positiv' ? 'text-positive-strong' : 'text-text',
             )}
           >
             {value === null ? '–' : (valueLabel ?? current)}

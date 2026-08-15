@@ -680,7 +680,7 @@ function TrainingDetail({
       footer={
         <SecondaryButton
           block
-          className="text-negative"
+          className="text-negative-strong"
           icon={<IconTrash size={18} />}
           onClick={() => onDelete(entry.id)}
         >
