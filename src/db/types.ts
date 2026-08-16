@@ -16,19 +16,12 @@
  * Pakete
  * ------------------------------------------------------------------ */
 
-export const PAKETE = {
-  training: { name: 'Nur Training', preis: 24 },
-  ernaehrung: { name: 'Nur Ernährung', preis: 24 },
-  lifestyle: { name: 'Lifestyle', preis: 39 },
-  individuell: { name: 'Individuell', preis: 0 },
-} as const;
-
-export type PaketKey = keyof typeof PAKETE;
-
-export function paketName(key: string | undefined): string {
-  if (!key) return 'Kein Paket';
-  return (PAKETE as Record<string, { name: string }>)[key]?.name ?? key;
-}
+/**
+ * Paketdefinitionen, Preisphasen und der Bestandsschutz stehen in
+ * `@/domain/pakete` – dort, wo auch die Regeln dazu getestet sind. Hier bleibt
+ * nur der Schlüsseltyp, weil `Client.paket` ihn braucht.
+ */
+export type PaketKey = string;
 
 /* ------------------------------------------------------------------ *
  * Trainingsplan

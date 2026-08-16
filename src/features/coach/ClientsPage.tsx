@@ -6,7 +6,8 @@ import { Card, Divider, ListRow, Section, StatTile } from '@/components/ui/Card'
 import { PillTabs } from '@/components/ui/Controls';
 import { SearchField } from '@/components/ui/Field';
 import { EmptyState, PageHeader, Pill, Screen } from '@/components/ui/Layout';
-import { clientName, paketName, type Client } from '@/db/types';
+import { clientName, type Client } from '@/db/types';
+import { paketName } from '@/domain/pakete';
 import { checkinLage, istOffen } from '@/domain/checkin';
 import { parseDatum } from '@/domain/dates';
 import { zahl } from '@/domain/nutrition';

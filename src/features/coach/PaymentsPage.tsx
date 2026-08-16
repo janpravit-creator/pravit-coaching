@@ -3,7 +3,8 @@ import { IconMoney } from '@/components/icons';
 import { Card, Divider, ListRow, Section, StatTile } from '@/components/ui/Card';
 import { EmptyState, PageHeader, Pill, ProgressBar, Screen } from '@/components/ui/Layout';
 import { saveZahlungen } from '@/db/repo/clients';
-import { clientName, paketName, type Client } from '@/db/types';
+import { clientName, type Client } from '@/db/types';
+import { paketName, preisEinesKunden } from '@/domain/pakete';
 import { dieserMonat } from '@/domain/dates';
 import { hatFestenPreis, istBezahlt, monatLabel, monatsLage, setzeZahlung } from '@/domain/payments';
 import { useKunden } from '@/hooks/useCoachData';
@@ -44,7 +45,7 @@ export default function PaymentsPage() {
     let bezahlteKunden = 0;
     for (const client of relevante) {
       if (bezahltStatus(client)) {
-        ist += client.paketPreis ?? 0;
+        ist += preisEinesKunden(client);
         bezahlteKunden += 1;
       }
     }
@@ -135,7 +136,7 @@ export default function PaymentsPage() {
                   {index > 0 && <Divider />}
                   <ListRow
                     title={clientName(client)}
-                    subtitle={`${paketName(client.paket)} · ${client.paketPreis ?? 0} €`}
+                    subtitle={`${paketName(client.paket)} · ${preisEinesKunden(client)} €`}
                     trailing={
                       <span className="flex items-center gap-2">
                         <Pill tone={bezahlt ? 'positiv' : 'warnung'}>

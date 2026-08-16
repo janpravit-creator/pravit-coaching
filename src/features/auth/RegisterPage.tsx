@@ -10,7 +10,8 @@ import { PageHeader, ProgressBar, Screen } from '@/components/ui/Layout';
 import { Sheet } from '@/components/ui/Sheet';
 import { createClient } from '@/db/repo/clients';
 import { createNotification } from '@/db/repo/notifications';
-import { PAKETE, type PaketKey } from '@/db/types';
+import type { PaketKey } from '@/db/types';
+import { PAKETE, WAEHLBARE_PAKETE, aktuellerPreis } from '@/domain/pakete';
 import { heute } from '@/domain/dates';
 import { anmeldeFehlerText, useAuthStore } from '@/state/authStore';
 import { toast } from '@/state/uiStore';
@@ -102,7 +103,9 @@ export default function RegisterPage({ nurProfil = false }: { nurProfil?: boolea
     setFehler(null);
     try {
       const uid = nurProfil ? user!.uid : (await registrieren(f.email, f.passwort)).uid;
-      const paketPreis = f.paket ? PAKETE[f.paket].preis : 0;
+      // Der Preis wird hier einmal festgeschrieben und danach nie automatisch
+      // angehoben – das ist der Bestandsschutz aus Kapitel 7.
+      const paketPreis = aktuellerPreis(f.paket) ?? 0;
 
       await createClient(uid, {
         email: nurProfil ? (user?.email ?? '') : f.email,
@@ -249,20 +252,27 @@ export default function RegisterPage({ nurProfil = false }: { nurProfil?: boolea
 
         {aktuell.id === 'paket' && (
           <div className="space-y-2.5">
-            {(Object.keys(PAKETE) as PaketKey[]).map((key) => {
+            {WAEHLBARE_PAKETE.map((key) => {
               const paket = PAKETE[key];
+              if (!paket) return null;
+              const preis = aktuellerPreis(key);
               const aktivPaket = f.paket === key;
               return (
                 <button
                   key={key}
-                  onClick={() => setze({ paket: key })}
-                  className={`flex w-full items-center justify-between gap-3 rounded-[var(--radius-card)] bg-surface-muted px-4 py-4 text-left transition-shadow ${
+                  onClick={() => setze({ paket: key as PaketKey })}
+                  className={`flex w-full items-start justify-between gap-3 rounded-[var(--radius-card)] bg-surface-muted px-4 py-4 text-left transition-shadow ${
                     aktivPaket ? 'ring-2 ring-text' : ''
                   }`}
                 >
-                  <span className="text-[16px] font-bold tracking-tight">{paket.name}</span>
-                  <span className="text-[15px] font-bold">
-                    {paket.preis > 0 ? `${paket.preis} €/Monat` : 'auf Anfrage'}
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[16px] font-bold tracking-tight">{paket.name}</span>
+                    <span className="mt-0.5 block text-[13px] leading-snug text-muted">
+                      {paket.inhalt}
+                    </span>
+                  </span>
+                  <span className="shrink-0 text-[15px] font-bold whitespace-nowrap">
+                    {preis === null ? 'auf Anfrage' : `${preis} €/Monat`}
                   </span>
                 </button>
               );

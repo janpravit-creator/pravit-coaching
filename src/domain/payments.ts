@@ -1,5 +1,6 @@
 import type { Client } from '@/db/types';
 import { dieserMonat } from './dates';
+import { preisEinesKunden } from './pakete';
 
 /**
  * Zahlungen und Einnahmen.
@@ -37,7 +38,7 @@ export function monatsLage(
 
   for (const client of clients) {
     if (client.aktiv === false || !hatFestenPreis(client)) continue;
-    const preis = client.paketPreis ?? 0;
+    const preis = preisEinesKunden(client, monat);
     soll += preis;
     if (istBezahlt(client, monat)) {
       ist += preis;
@@ -72,7 +73,7 @@ export function einnahmenJeMonat(clients: Client[]): Array<{ monat: string; betr
   for (const client of clients) {
     for (const z of client.zahlungen ?? []) {
       if (!z.bezahlt || !z.monat) continue;
-      summen.set(z.monat, (summen.get(z.monat) ?? 0) + (client.paketPreis ?? 0));
+      summen.set(z.monat, (summen.get(z.monat) ?? 0) + preisEinesKunden(client, z.monat));
     }
   }
 
@@ -85,7 +86,7 @@ export function einnahmenJeMonat(clients: Client[]): Array<{ monat: string; betr
 export function wiederkehrenderUmsatz(clients: Client[]): number {
   return clients
     .filter((c) => c.aktiv !== false && hatFestenPreis(c))
-    .reduce((sum, c) => sum + (c.paketPreis ?? 0), 0);
+    .reduce((sum, c) => sum + preisEinesKunden(c), 0);
 }
 
 /** Monatsbezeichnung für die Anzeige: `2026-08` → `August 2026`. */

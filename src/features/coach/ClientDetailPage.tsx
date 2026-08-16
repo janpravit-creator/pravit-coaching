@@ -32,9 +32,7 @@ import {
 import { listTemplates, vorlagenArt } from '@/db/repo/library';
 import { deleteLogEntry } from '@/db/repo/logbook';
 import {
-  PAKETE,
   clientName,
-  paketName,
   type Checkin,
   type Client,
   type LogbookEntry,
@@ -43,6 +41,7 @@ import {
   type Template,
   type TrainingPlan,
 } from '@/db/types';
+import { PAKETE, WAEHLBARE_PAKETE, aktuellerPreis, paketName, preislage } from '@/domain/pakete';
 import { istOffen } from '@/domain/checkin';
 import { dieserMonat, parseDatum } from '@/domain/dates';
 import { zahl } from '@/domain/nutrition';
@@ -716,7 +715,13 @@ function Profil({ client, onGeaendert }: { client: Client; onGeaendert: () => vo
   const confirm = useConfirm();
   const [bearbeiten, setBearbeiten] = useState(false);
 
-  const [paket, setPaket] = useState(client.paket ?? 'lifestyle');
+  const [paket, setPaket] = useState(client.paket ?? 'komplett');
+  // Das aktuelle Paket muss in der Liste stehen, auch wenn es ein
+  // Testphasen-Paket ist – sonst stünde die Auswahl bei Bestandskunden leer.
+  const paketAuswahl = WAEHLBARE_PAKETE.includes(paket)
+    ? WAEHLBARE_PAKETE
+    : [paket, ...WAEHLBARE_PAKETE];
+  const lage = preislage(client);
   const [preis, setPreis] = useState(String(client.paketPreis ?? 0));
   const [startDatum, setStartDatum] = useState(client.startDatum ?? '');
   const [laeuft, setLaeuft] = useState(false);
@@ -754,15 +759,25 @@ function Profil({ client, onGeaendert }: { client: Client; onGeaendert: () => vo
               setPaket(wert);
               // Der hinterlegte Preis folgt dem Paket, bleibt aber änderbar –
               // bei „Individuell" wird ohnehin von Hand eingetragen.
-              const standard = (PAKETE as Record<string, { preis: number }>)[wert]?.preis;
-              if (standard !== undefined && standard > 0) setPreis(String(standard));
+              const standard = aktuellerPreis(wert);
+              if (standard !== null) setPreis(String(standard));
             }}
-            options={Object.entries(PAKETE).map(([key, p]) => ({
-              value: key,
-              label: p.name,
-              description: p.preis > 0 ? `${p.preis} €/Monat` : 'freier Preis',
-            }))}
+            options={paketAuswahl.map((key) => {
+              const preis = aktuellerPreis(key);
+              return {
+                value: key,
+                label: PAKETE[key]?.name ?? key,
+                description: preis === null ? 'freier Preis' : `${preis} €/Monat`,
+              };
+            })}
           />
+
+          {lage.bestandsschutz && (
+            <p className="-mt-1 mb-3 text-[13px] leading-snug text-muted">
+              Bestandspreis: zahlt {lage.preis} €, neu wären {lage.listenpreis} €
+              {' '}({lage.ersparnis} € günstiger). Der Preis bleibt, bis du ihn hier änderst.
+            </p>
+          )}
           <div className="grid grid-cols-2 gap-x-3">
             <TextField
               label="Preis"

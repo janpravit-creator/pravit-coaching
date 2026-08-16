@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import { IconMoney } from '@/components/icons';
 import { Card, Divider, ListRow, Section, StatTile } from '@/components/ui/Card';
 import { EmptyState, PageHeader, Pill, Screen } from '@/components/ui/Layout';
-import { PAKETE, paketName, type Client } from '@/db/types';
+import type { Client } from '@/db/types';
+import { PAKETE, paketName } from '@/domain/pakete';
 import { dieserMonat } from '@/domain/dates';
 import {
   einnahmenJeMonat,
@@ -123,11 +124,14 @@ export default function StatsPage() {
           <StatTile value={alle.filter((c) => c.aktiv === false).length} label="Inaktiv" />
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          {Object.entries(PAKETE).map(([key, paket]) => (
-            <Pill key={key}>
-              {paket.name}: {anzahlMitPaket(alle, key)}
-            </Pill>
-          ))}
+          {Object.entries(PAKETE)
+            // Ausgelaufene Pakete nur zeigen, solange noch jemand darauf sitzt.
+            .filter(([key, paket]) => !paket.veraltet || anzahlMitPaket(alle, key) > 0)
+            .map(([key, paket]) => (
+              <Pill key={key}>
+                {paket.name}: {anzahlMitPaket(alle, key)}
+              </Pill>
+            ))}
         </div>
       </Section>
     </Screen>
