@@ -42,6 +42,12 @@ export const paths = {
 
   customFoods: () => collection(db, 'customFoods'),
   customFood: (id: string) => doc(db, 'customFoods', id),
+
+  invoices: () => collection(db, 'invoices'),
+  invoice: (id: string) => doc(db, 'invoices', id),
+
+  referrals: () => collection(db, 'referrals'),
+  referral: (id: string) => doc(db, 'referrals', id),
 } satisfies Record<string, (...args: never[]) => unknown>;
 
 /** Wandelt einen Abfrage-Schnappschuss in typisierte Datensätze mit `id`. */

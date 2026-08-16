@@ -71,3 +71,17 @@ export function monthShort(date: Date): string {
 export function isoWeek(date: Date): string {
   return format(date, "yyyy-'KW'II", { locale: de });
 }
+
+/**
+ * ISO-Datum `2026-08-16` als deutsches `16.08.2026`.
+ *
+ * Reine Zeichenketten-Umformung ohne `Date`-Umweg – so kann keine Zeitzone
+ * das Datum um einen Tag verschieben. Unlesbares kommt unverändert zurück,
+ * damit nirgends „Invalid Date" steht.
+ */
+export function dateNumeric(iso: string | undefined | null): string {
+  if (!iso) return '';
+  const treffer = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso.trim());
+  if (!treffer) return iso;
+  return `${treffer[3]}.${treffer[2]}.${treffer[1]}`;
+}

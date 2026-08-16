@@ -24,6 +24,34 @@
 export type PaketKey = string;
 
 /* ------------------------------------------------------------------ *
+ * Rechnungen
+ * ------------------------------------------------------------------ */
+
+/**
+ * Eine vergebene Rechnungsnummer.
+ *
+ * Wird gespeichert, sobald eine Rechnung erzeugt wurde – § 14 UStG verlangt
+ * fortlaufende, nachvollziehbare Nummern. Die Kennung ist
+ * `{clientId}_{monat}`, damit derselbe Monat nie zwei Belege bekommt.
+ */
+export interface Invoice {
+  id: string;
+  nummer?: string;
+  clientId?: string;
+  clientName?: string;
+  /** Abrechnungsmonat als `YYYY-MM`. */
+  monat?: string;
+  /** Alle abgerechneten Monate – bei Rückstand mehrere. */
+  monate?: string[];
+  betrag?: number;
+  paket?: string;
+  /** Rechnungsdatum als `YYYY-MM-DD`. */
+  datum?: string;
+  faelligAm?: string;
+  createdAt?: string;
+}
+
+/* ------------------------------------------------------------------ *
  * Trainingsplan
  * ------------------------------------------------------------------ */
 

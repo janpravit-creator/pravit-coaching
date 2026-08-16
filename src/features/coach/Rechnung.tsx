@@ -1,38 +1,87 @@
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { PrimaryButton } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/Layout';
 import { Sheet } from '@/components/ui/Sheet';
+import { ensureInvoice } from '@/db/repo/invoices';
 import { clientName, type Client } from '@/db/types';
-import { paketName } from '@/domain/pakete';
-import { dieserMonat } from '@/domain/dates';
-import { monatLabel } from '@/domain/payments';
-import { hatFestenPreis } from '@/domain/payments';
+import { heute } from '@/domain/dates';
+import { offeneMonate, preisEinesKunden } from '@/domain/pakete';
+import { hatFestenPreis, monatLabel } from '@/domain/payments';
+import { plusTage, postenFuer, summe } from '@/domain/rechnung';
+import { GESCHAEFT, fehlendeAngaben } from '@/lib/geschaeft';
+import { RechnungBeleg } from './RechnungBeleg';
 
 /**
- * Monatsrechnung.
+ * Monatsrechnung mit fortlaufender Nummer.
  *
- * Die Rechnungsnummer wird aus Kunde und Monat gebildet statt aus einer
- * Zufallszahl: derselbe Monat ergibt dieselbe Nummer. Vorher bekam ein Kunde
- * bei jedem Öffnen eine neue – und damit einen zweiten Beleg über dieselbe
- * Leistung.
+ * Die Nummer wird beim ersten Öffnen vergeben und in `invoices` abgelegt;
+ * jedes weitere Öffnen zeigt dieselbe. Vorher entstand sie aus einem Hash über
+ * Kunde und Monat — eindeutig, aber nicht fortlaufend, wie § 14 UStG es
+ * verlangt.
+ *
+ * Steht ein Rückstand offen, werden alle unbezahlten Monate in einem Beleg
+ * aufgeführt, statt für jeden Monat eine eigene Rechnung zu erzeugen.
  */
 export function Rechnung({
   client,
   open,
   onClose,
-  monat = dieserMonat(),
+  monat,
 }: {
   client: Client;
   open: boolean;
   onClose: () => void;
   monat?: string;
 }) {
-  const nummer = useMemo(() => rechnungsNummer(client, monat), [client.id, monat]);
-  const betrag = client.paketPreis ?? 0;
+  const datum = heute();
+  const abrechnungsmonat = monat ?? datum.slice(0, 7);
+
+  // Bei Rückstand alle offenen Monate abrechnen, sonst den gewählten Monat.
+  const offen = offeneMonate(client, abrechnungsmonat);
+  const monate = offen.length > 0 ? offen : [abrechnungsmonat];
+
+  const posten = postenFuer(client, monate, monatLabel);
+  const gesamt = summe(posten);
+  const faelligAm = plusTage(datum, GESCHAEFT.zahlungszielTage);
+  const luecken = fehlendeAngaben();
+
+  const [nummer, setNummer] = useState<string | null>(null);
+  const [fehler, setFehler] = useState<string | null>(null);
+
+  const abrechenbar = open && hatFestenPreis(client) && gesamt > 0;
+
+  useEffect(() => {
+    if (!abrechenbar) return;
+    let abgebrochen = false;
+
+    void ensureInvoice({
+      clientId: client.id,
+      clientName: clientName(client),
+      monat: abrechnungsmonat,
+      monate,
+      betrag: gesamt,
+      paket: client.paket,
+      datum,
+      faelligAm,
+    })
+      .then((r) => {
+        if (!abgebrochen) setNummer(r.nummer ?? null);
+      })
+      .catch((e: unknown) => {
+        if (!abgebrochen) setFehler(e instanceof Error ? e.message : 'Unbekannter Fehler');
+      });
+
+    return () => {
+      abgebrochen = true;
+    };
+    // Die Nummer hängt an Kunde und Abrechnungsmonat – nicht an den abgeleiteten
+    // Werten, die sich bei jedem Rendern neu ergeben.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [abrechenbar, client.id, abrechnungsmonat]);
 
   if (!open) return null;
 
-  if (!hatFestenPreis(client) || betrag <= 0) {
+  if (!hatFestenPreis(client) || preisEinesKunden(client) <= 0) {
     return (
       <Sheet open onClose={onClose} title="Keine Rechnung">
         <EmptyState
@@ -48,79 +97,37 @@ export function Rechnung({
       open
       onClose={onClose}
       title="Rechnung"
-      subtitle={monatLabel(monat)}
+      subtitle={monate.length > 1 ? `${monate.length} Monate` : monatLabel(abrechnungsmonat)}
       fullHeight
       footer={
-        <PrimaryButton block onClick={() => window.print()}>
-          Drucken oder als PDF sichern
+        <PrimaryButton block disabled={nummer === null} onClick={() => window.print()}>
+          {nummer === null ? 'Nummer wird vergeben …' : 'Drucken oder als PDF sichern'}
         </PrimaryButton>
       }
     >
-      {/* `print-bereich` blendet beim Drucken alles andere aus – siehe theme.css */}
-      <div className="print-bereich rounded-[var(--radius-card)] bg-surface p-6 shadow-card">
-        <div className="mb-8 flex items-start justify-between gap-6">
-          <div>
-            <div className="text-[22px] font-extrabold tracking-[0.18em]">PRAVIT</div>
-            <div className="mt-2 text-[13px] leading-relaxed text-muted">
-              Jan Pravit Jungmann
-              <br />
-              Hamburg
-              <br />
-              jan.pravit@gmx.de
-            </div>
-          </div>
-          <div className="text-right">
-            <div className="text-[13px] font-bold">RECHNUNG</div>
-            <div className="mt-1 text-[13px] text-muted">{nummer}</div>
-            <div className="text-[13px] text-muted">{monatLabel(monat)}</div>
-          </div>
+      {luecken.length > 0 && (
+        <div className="mb-4 rounded-2xl bg-warning-soft px-4 py-3.5 text-[14px] leading-snug text-warning">
+          <strong className="font-bold">Pflichtangaben fehlen:</strong> {luecken.join(', ')}.
+          Trag sie in <code className="text-[13px]">src/lib/geschaeft.ts</code> ein — ohne sie ist
+          die Rechnung nicht gültig. Dieser Hinweis wird nicht mitgedruckt.
         </div>
+      )}
 
-        <div className="border-t border-line pt-4">
-          <div className="text-[12px] font-bold tracking-wide text-muted uppercase">
-            Rechnungsempfänger
-          </div>
-          <div className="mt-1.5 text-[16px] font-bold">{clientName(client)}</div>
-          {client.email && <div className="text-[14px] text-muted">{client.email}</div>}
+      {fehler && (
+        <div className="mb-4 rounded-2xl bg-negative-soft px-4 py-3.5 text-[14px] font-semibold text-negative">
+          Rechnungsnummer konnte nicht vergeben werden: {fehler}
         </div>
+      )}
 
-        <table className="mt-6 w-full border-collapse text-left">
-          <thead>
-            <tr className="border-b border-line">
-              <th className="py-2 text-[12px] font-bold tracking-wide text-muted uppercase">
-                Leistung
-              </th>
-              <th className="py-2 text-center text-[12px] font-bold tracking-wide text-muted uppercase">
-                Zeitraum
-              </th>
-              <th className="py-2 text-right text-[12px] font-bold tracking-wide text-muted uppercase">
-                Betrag
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="py-3 text-[15px]">{paketName(client.paket)}</td>
-              <td className="py-3 text-center text-[15px] text-muted">{monatLabel(monat)}</td>
-              <td className="tnum py-3 text-right text-[15px] font-bold">{betrag},00 €</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div className="mt-4 flex items-center justify-between gap-4 rounded-2xl bg-surface-muted px-4 py-3.5">
-          <span className="text-[13px] text-muted">Kleinunternehmer gemäß § 19 UStG</span>
-          <span className="tnum text-[20px] font-extrabold tracking-tight">{betrag},00 €</span>
-        </div>
-      </div>
+      <RechnungBeleg
+        nummer={nummer}
+        datum={datum}
+        faelligAm={faelligAm}
+        empfaenger={clientName(client)}
+        empfaengerEmail={client.email}
+        posten={posten}
+        gesamt={gesamt}
+      />
     </Sheet>
   );
-}
-
-/** `PRV-2026-08-a1b2` – gleich bleibend für Kunde und Monat. */
-function rechnungsNummer(client: Client, monat: string): string {
-  let hash = 0;
-  for (const zeichen of client.id) {
-    hash = (hash * 31 + zeichen.charCodeAt(0)) % 65_536;
-  }
-  return `PRV-${monat}-${hash.toString(16).padStart(4, '0')}`;
 }
