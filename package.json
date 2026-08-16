@@ -20,11 +20,13 @@
     "@dnd-kit/utilities": "^3.2.2",
     "date-fns": "^4.4.0",
     "firebase": "^12.4.0",
+    "firebase-admin": "^14.2.0",
     "framer-motion": "^13.1.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.2",
     "recharts": "^3.10.1",
+    "stripe": "^22.5.0",
     "zustand": "^5.0.15"
   },
   "devDependencies": {
