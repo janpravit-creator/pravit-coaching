@@ -23,6 +23,7 @@ const CoachTemplates = lazy(() => import('./features/coach/TemplatesPage'));
 const CoachPayments = lazy(() => import('./features/coach/PaymentsPage'));
 const CoachStats = lazy(() => import('./features/coach/StatsPage'));
 const CoachLibrary = lazy(() => import('./features/coach/LibraryPage'));
+const CoachReferrals = lazy(() => import('./features/coach/ReferralsPage'));
 const CoachMore = lazy(() => import('./features/coach/MorePage'));
 
 export default function App() {
@@ -101,6 +102,7 @@ function CoachRouten() {
       <Route path="/coach/checkins" element={<CoachCheckins />} />
       <Route path="/coach/todos" element={<CoachTodos />} />
       <Route path="/coach/vorlagen" element={<CoachTemplates />} />
+      <Route path="/coach/empfehlungen" element={<CoachReferrals />} />
       <Route path="/coach/zahlungen" element={<CoachPayments />} />
       <Route path="/coach/einnahmen" element={<CoachStats />} />
       <Route path="/coach/datenbank" element={<CoachLibrary />} />

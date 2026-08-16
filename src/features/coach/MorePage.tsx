@@ -6,6 +6,7 @@ import {
   IconCheck,
   IconDumbbell,
   IconLogout,
+  IconUsers,
   IconMoney,
   IconMoon,
   IconSun,
@@ -86,6 +87,14 @@ export default function MorePage() {
             title="Einnahmen"
             subtitle="Verlauf und wiederkehrender Umsatz"
             onClick={() => navigate('/coach/einnahmen')}
+            chevron
+          />
+          <Divider />
+          <ListRow
+            leading={<IconUsers size={20} className="text-muted" />}
+            title="Empfehlungen"
+            subtitle="Wer hat wen geworben, und was steht dafür an"
+            onClick={() => navigate('/coach/empfehlungen')}
             chevron
           />
           <Divider />

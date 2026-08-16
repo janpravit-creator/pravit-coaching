@@ -24,6 +24,33 @@
 export type PaketKey = string;
 
 /* ------------------------------------------------------------------ *
+ * Empfehlungen
+ * ------------------------------------------------------------------ */
+
+/**
+ * Eine Empfehlung: Wer hat wen geworben.
+ *
+ * Entsteht, sobald ein Neukunde einen Empfehlungscode angibt. `gewaehrt` merkt
+ * sich, dass die Gutschrift verrechnet wurde – sonst stünde derselbe Anspruch
+ * jeden Monat erneut offen.
+ */
+export interface Referral {
+  id: string;
+  /** Der Code, über den geworben wurde. */
+  code?: string;
+  werberId?: string;
+  werberName?: string;
+  geworbenerId?: string;
+  geworbenerName?: string;
+  /** Gewährt am – als ISO-Datum. Leer, solange offen. */
+  gewaehrt?: string;
+  /** Was gewährt wurde, für die Nachvollziehbarkeit. */
+  gewaehrtArt?: string;
+  gewaehrtBetrag?: number;
+  createdAt?: string;
+}
+
+/* ------------------------------------------------------------------ *
  * Rechnungen
  * ------------------------------------------------------------------ */
 

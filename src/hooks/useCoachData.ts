@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { listCheckins } from '@/db/repo/checkins';
 import { getClient, listClients } from '@/db/repo/clients';
 import { listCustomFoods, listExercises, listTemplates } from '@/db/repo/library';
+import { listReferrals } from '@/db/repo/referrals';
 import { listLogbook } from '@/db/repo/logbook';
 import { listNotifications } from '@/db/repo/notifications';
 import type { Checkin, Client } from '@/db/types';
@@ -156,6 +157,15 @@ export function useLebensmittel() {
   return mitCacheReset(
     useAsync(
       useCallback(() => zwischengespeichert('lebensmittel', () => listCustomFoods()), []),
+      [],
+    ),
+  );
+}
+
+export function useEmpfehlungen() {
+  return mitCacheReset(
+    useAsync(
+      useCallback(() => zwischengespeichert('empfehlungen', () => listReferrals()), []),
       [],
     ),
   );
