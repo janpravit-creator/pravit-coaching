@@ -38,7 +38,7 @@ export function monatsLage(
 
   for (const client of clients) {
     if (client.aktiv === false || !hatFestenPreis(client)) continue;
-    const preis = preisEinesKunden(client, monat);
+    const preis = preisEinesKunden(client);
     soll += preis;
     if (istBezahlt(client, monat)) {
       ist += preis;
@@ -73,7 +73,7 @@ export function einnahmenJeMonat(clients: Client[]): Array<{ monat: string; betr
   for (const client of clients) {
     for (const z of client.zahlungen ?? []) {
       if (!z.bezahlt || !z.monat) continue;
-      summen.set(z.monat, (summen.get(z.monat) ?? 0) + preisEinesKunden(client, z.monat));
+      summen.set(z.monat, (summen.get(z.monat) ?? 0) + preisEinesKunden(client));
     }
   }
 

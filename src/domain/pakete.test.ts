@@ -2,56 +2,37 @@ import { describe, expect, it } from 'vitest';
 import type { Client } from '@/db/types';
 import {
   PAKETE,
-  PHASEN_START,
   WAEHLBARE_PAKETE,
-  aktuellePhase,
   aktuellerPreis,
   monateDabei,
   naechsteFaelligkeit,
+  offeneMonate,
+  paketInhalt,
   paketName,
   preisEinesKunden,
-  preisFuer,
   preislage,
 } from './pakete';
 
-describe('Preisphasen', () => {
-  it('zählt den Startmonat als Monat 1, nicht als Monat 0', () => {
-    // Sonst verschöbe sich jede Phasengrenze um einen Monat.
-    expect(aktuellePhase(PHASEN_START)).toBe('start');
-  });
-
-  it('hält die Grenzen aus Kapitel 7 ein', () => {
-    // Monat 1 ist Juni 2026.
-    expect(aktuellePhase('2026-11')).toBe('start'); // Monat 6
-    expect(aktuellePhase('2026-12')).toBe('standard'); // Monat 7
-    expect(aktuellePhase('2027-11')).toBe('standard'); // Monat 18
-    expect(aktuellePhase('2027-12')).toBe('etabliert'); // Monat 19
-  });
-
-  it('behandelt Monate vor dem Start als Startphase', () => {
-    expect(aktuellePhase('2026-01')).toBe('start');
-  });
-
-  it('rechnet über den Jahreswechsel richtig', () => {
-    // 2026-06 ist Monat 1, 2027-01 ist Monat 8 – schon Standardphase.
-    expect(aktuellePhase('2027-01')).toBe('standard');
-  });
-});
-
 describe('Preistabelle', () => {
-  it('trägt die Preise aus Kapitel 7', () => {
-    expect(preisFuer('training', 'start')).toBe(79);
-    expect(preisFuer('training', 'etabliert')).toBe(99);
-    expect(preisFuer('komplett', 'start')).toBe(129);
-    expect(preisFuer('komplett', 'standard')).toBe(149);
-    expect(preisFuer('komplett', 'etabliert')).toBe(179);
-    expect(preisFuer('premium', 'start')).toBe(199);
-    expect(preisFuer('premium', 'etabliert')).toBe(259);
+  it('trägt die aktuell gültigen Preise', () => {
+    expect(aktuellerPreis('training')).toBe(79);
+    expect(aktuellerPreis('ernaehrung')).toBe(79);
+    expect(aktuellerPreis('komplett')).toBe(129);
+    expect(aktuellerPreis('premium')).toBe(199);
+  });
+
+  it('beschreibt Premium mit vier Einheiten pro Monat', () => {
+    expect(paketInhalt('premium')).toContain('4 Trainingseinheiten pro Monat');
+    expect(paketInhalt('premium')).toContain('1× pro Woche');
   });
 
   it('hat für „Individuell" keinen Listenpreis', () => {
-    expect(preisFuer('individuell', 'start')).toBeNull();
     expect(aktuellerPreis('individuell')).toBeNull();
+  });
+
+  it('kennt keinen unbekannten Schlüssel als Preis', () => {
+    expect(aktuellerPreis('gibtsnicht')).toBeNull();
+    expect(aktuellerPreis(undefined)).toBeNull();
   });
 
   it('stellt das alte Testpaket nicht mehr zur Auswahl, zeigt es aber an', () => {
@@ -62,6 +43,16 @@ describe('Preistabelle', () => {
     expect(PAKETE['lifestyle']?.veraltet).toBe(true);
   });
 
+  it('stellt die vier echten Pakete plus „Individuell" zur Auswahl', () => {
+    expect(WAEHLBARE_PAKETE).toEqual([
+      'training',
+      'ernaehrung',
+      'komplett',
+      'premium',
+      'individuell',
+    ]);
+  });
+
   it('gibt einen unbekannten Schlüssel unverändert zurück, statt ihn zu verschlucken', () => {
     expect(paketName('irgendwas')).toBe('irgendwas');
     expect(paketName(undefined)).toBe('Kein Paket');
@@ -69,40 +60,38 @@ describe('Preistabelle', () => {
 });
 
 describe('Bestandsschutz', () => {
-  const bestandskunde: Client = { id: 'a', paket: 'komplett', paketPreis: 129 };
-
-  it('lässt den hinterlegten Preis gewinnen, auch wenn die Phase weiter ist', () => {
-    // Der Kern der Regel: Preiserhöhung gilt nur für Neukunden.
-    expect(preisEinesKunden(bestandskunde, '2028-06')).toBe(129);
-    expect(aktuellerPreis('komplett', '2028-06')).toBe(179);
+  it('lässt den hinterlegten Preis gewinnen', () => {
+    // Der Kern der Regel: Wird die Tabelle oben von Hand angehoben, gilt das
+    // nur für Neukunden.
+    const alt: Client = { id: 'a', paket: 'komplett', paketPreis: 99 };
+    expect(preisEinesKunden(alt)).toBe(99);
+    expect(aktuellerPreis('komplett')).toBe(129);
   });
 
   it('weist den Unterschied aus', () => {
-    const lage = preislage(bestandskunde, '2028-06');
-    expect(lage).toMatchObject({
-      preis: 129,
-      listenpreis: 179,
+    const alt: Client = { id: 'a', paket: 'komplett', paketPreis: 99 };
+    expect(preislage(alt)).toMatchObject({
+      preis: 99,
+      listenpreis: 129,
       bestandsschutz: true,
-      ersparnis: 50,
+      ersparnis: 30,
     });
   });
 
-  it('meldet keinen Bestandsschutz, wenn der Kunde den aktuellen Preis zahlt', () => {
-    const neu: Client = { id: 'b', paket: 'komplett', paketPreis: 179 };
-    expect(preislage(neu, '2028-06').bestandsschutz).toBe(false);
-    expect(preislage(neu, '2028-06').ersparnis).toBe(0);
+  it('meldet keinen Bestandsschutz beim aktuellen Preis', () => {
+    const neu: Client = { id: 'b', paket: 'komplett', paketPreis: 129 };
+    expect(preislage(neu).bestandsschutz).toBe(false);
+    expect(preislage(neu).ersparnis).toBe(0);
   });
 
   it('meldet keinen Bestandsschutz, wenn jemand über Listenpreis zahlt', () => {
     const teuer: Client = { id: 'c', paket: 'training', paketPreis: 150 };
-    const lage = preislage(teuer, PHASEN_START);
-    expect(lage.bestandsschutz).toBe(false);
-    expect(lage.preis).toBe(150);
+    expect(preislage(teuer).bestandsschutz).toBe(false);
+    expect(preislage(teuer).preis).toBe(150);
   });
 
-  it('nimmt den heutigen Listenpreis, wenn gar nichts hinterlegt ist', () => {
-    const ohne: Client = { id: 'd', paket: 'training' };
-    expect(preisEinesKunden(ohne, PHASEN_START)).toBe(79);
+  it('nimmt den Listenpreis, wenn gar nichts hinterlegt ist', () => {
+    expect(preisEinesKunden({ id: 'd', paket: 'training' })).toBe(79);
   });
 
   it('bleibt bei 0, wenn weder Preis noch Listenpreis existieren', () => {
@@ -116,10 +105,10 @@ describe('Nächste Fälligkeit', () => {
   it('findet den ersten unbezahlten Monat ab Beitritt', () => {
     const c: Client = {
       id: 'a',
-      startDatum: '2026-09-01',
-      zahlungen: [{ monat: '2026-09', bezahlt: true }],
+      startDatum: '2026-06-01',
+      zahlungen: [{ monat: '2026-06', bezahlt: true }],
     };
-    expect(naechsteFaelligkeit(c, '2026-11')).toBe('2026-10');
+    expect(naechsteFaelligkeit(c, '2026-08')).toBe('2026-07');
   });
 
   it('übersieht eine Lücke zwischen bezahlten Monaten nicht', () => {
@@ -134,27 +123,29 @@ describe('Nächste Fälligkeit', () => {
       ],
     };
     expect(naechsteFaelligkeit(c, '2027-05')).toBe('2027-04');
+    expect(offeneMonate(c, '2027-05')).toEqual(['2027-04']);
   });
 
   it('gibt null zurück, wenn alles bis heute beglichen ist', () => {
     const c: Client = {
       id: 'c',
-      startDatum: '2026-09-01',
+      startDatum: '2026-06-01',
       zahlungen: [
-        { monat: '2026-09', bezahlt: true },
-        { monat: '2026-10', bezahlt: true },
+        { monat: '2026-06', bezahlt: true },
+        { monat: '2026-07', bezahlt: true },
       ],
     };
-    expect(naechsteFaelligkeit(c, '2026-10')).toBeNull();
+    expect(naechsteFaelligkeit(c, '2026-07')).toBeNull();
+    expect(offeneMonate(c, '2026-07')).toEqual([]);
   });
 
   it('zählt einen als unbezahlt markierten Monat als offen', () => {
     const c: Client = {
       id: 'd',
-      startDatum: '2026-09-01',
-      zahlungen: [{ monat: '2026-09', bezahlt: false }],
+      startDatum: '2026-06-01',
+      zahlungen: [{ monat: '2026-06', bezahlt: false }],
     };
-    expect(naechsteFaelligkeit(c, '2026-09')).toBe('2026-09');
+    expect(naechsteFaelligkeit(c, '2026-06')).toBe('2026-06');
   });
 
   it('nennt den Startmonat, wenn der Kunde erst künftig beginnt', () => {
@@ -165,6 +156,7 @@ describe('Nächste Fälligkeit', () => {
   it('gibt ohne brauchbares Startdatum null zurück statt zu raten', () => {
     expect(naechsteFaelligkeit({ id: 'f' }, '2026-11')).toBeNull();
     expect(naechsteFaelligkeit({ id: 'g', startDatum: 'demnächst' }, '2026-11')).toBeNull();
+    expect(offeneMonate({ id: 'f' }, '2026-11')).toEqual([]);
   });
 
   it('läuft über den Jahreswechsel', () => {
@@ -177,13 +169,14 @@ describe('Nächste Fälligkeit', () => {
       ],
     };
     expect(naechsteFaelligkeit(c, '2027-02')).toBe('2027-01');
+    expect(offeneMonate(c, '2027-02')).toEqual(['2027-01', '2027-02']);
   });
 });
 
 describe('Monate dabei', () => {
   it('zählt den Startmonat als ersten Monat', () => {
-    expect(monateDabei({ id: 'a', startDatum: '2026-09-01' }, '2026-09')).toBe(1);
-    expect(monateDabei({ id: 'a', startDatum: '2026-09-01' }, '2027-09')).toBe(13);
+    expect(monateDabei({ id: 'a', startDatum: '2026-06-01' }, '2026-06')).toBe(1);
+    expect(monateDabei({ id: 'a', startDatum: '2026-06-01' }, '2027-06')).toBe(13);
   });
 
   it('gibt ohne Startdatum null zurück', () => {
