@@ -97,3 +97,11 @@ export function euro(betrag: number): string {
     maximumFractionDigits: 2,
   })} €`;
 }
+
+/**
+ * Betrag ohne Nachkommastellen – für Kacheln, in denen „1.371,00 €" sonst
+ * umbricht und die Zahl über zwei Zeilen zerreißt.
+ */
+export function euroKurz(betrag: number): string {
+  return `${Math.round(betrag).toLocaleString('de-DE')} €`;
+}

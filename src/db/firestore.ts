@@ -48,6 +48,9 @@ export const paths = {
 
   referrals: () => collection(db, 'referrals'),
   referral: (id: string) => doc(db, 'referrals', id),
+
+  /** Einstellungen des Coaches – ein Dokument je Bereich. */
+  einstellung: (bereich: string) => doc(db, 'settings', bereich),
 } satisfies Record<string, (...args: never[]) => unknown>;
 
 /** Wandelt einen Abfrage-Schnappschuss in typisierte Datensätze mit `id`. */
