@@ -23,11 +23,14 @@ export type Phase = 'start' | 'standard' | 'etabliert';
 /**
  * Beginn der Preisphasen als `YYYY-MM`.
  *
- * Monat 1 ist dieser Monat; Phase „Start" läuft Monat 1–6, „Standard" 7–18,
- * „Etabliert" ab 19. Verschiebt sich der tatsächliche Start, ist das die eine
- * Zeile, die angepasst werden muss — alles andere rechnet sich daraus.
+ * Monat 1 ist Juni 2026, der Beginn der Betreuung. „Start" läuft Monat 1–6
+ * (bis November 2026), „Standard" 7–18 (Dezember 2026 bis November 2027),
+ * „Etabliert" ab 19 (ab Dezember 2027).
+ *
+ * Verschiebt sich der tatsächliche Start, ist das die eine Zeile, die
+ * angepasst werden muss — alles andere rechnet sich daraus.
  */
-export const PHASEN_START = '2026-09';
+export const PHASEN_START = '2026-06';
 
 export interface PaketDefinition {
   name: string;

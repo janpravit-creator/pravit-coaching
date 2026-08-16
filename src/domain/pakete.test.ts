@@ -21,10 +21,11 @@ describe('Preisphasen', () => {
   });
 
   it('hält die Grenzen aus Kapitel 7 ein', () => {
-    expect(aktuellePhase('2027-02')).toBe('start'); // Monat 6
-    expect(aktuellePhase('2027-03')).toBe('standard'); // Monat 7
-    expect(aktuellePhase('2028-02')).toBe('standard'); // Monat 18
-    expect(aktuellePhase('2028-03')).toBe('etabliert'); // Monat 19
+    // Monat 1 ist Juni 2026.
+    expect(aktuellePhase('2026-11')).toBe('start'); // Monat 6
+    expect(aktuellePhase('2026-12')).toBe('standard'); // Monat 7
+    expect(aktuellePhase('2027-11')).toBe('standard'); // Monat 18
+    expect(aktuellePhase('2027-12')).toBe('etabliert'); // Monat 19
   });
 
   it('behandelt Monate vor dem Start als Startphase', () => {
@@ -32,8 +33,8 @@ describe('Preisphasen', () => {
   });
 
   it('rechnet über den Jahreswechsel richtig', () => {
-    // 2026-09 ist Monat 1, 2027-01 ist Monat 5 – noch Startphase.
-    expect(aktuellePhase('2027-01')).toBe('start');
+    // 2026-06 ist Monat 1, 2027-01 ist Monat 8 – schon Standardphase.
+    expect(aktuellePhase('2027-01')).toBe('standard');
   });
 });
 
