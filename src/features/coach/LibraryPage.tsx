@@ -275,7 +275,7 @@ function UebungSheet({
         <div className="mt-4 flex justify-end">
           <button
             onClick={() => onLoeschen(uebung)}
-            className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[15px] font-semibold text-negative-strong"
+            className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[15px] font-semibold text-negative"
           >
             <IconTrash size={16} />
             Übung löschen
@@ -529,7 +529,7 @@ function LebensmittelSheet({
         <div className="mt-4 flex justify-end">
           <button
             onClick={() => onLoeschen(food)}
-            className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[15px] font-semibold text-negative-strong"
+            className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-[15px] font-semibold text-negative"
           >
             <IconTrash size={16} />
             Lebensmittel löschen

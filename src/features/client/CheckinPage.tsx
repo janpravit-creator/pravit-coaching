@@ -261,8 +261,8 @@ function CheckinDetail({ checkin, onClose }: { checkin: Checkin | null; onClose:
       {hatFeedback(checkin) && (
         <Card className="mb-5 bg-positive-soft shadow-none">
           <div className="mb-1.5 flex items-center gap-2">
-            <IconChevronRight size={16} className="text-positive-strong" />
-            <span className="text-[13px] font-bold text-positive-strong">Feedback von deinem Coach</span>
+            <IconChevronRight size={16} className="text-positive" />
+            <span className="text-[13px] font-bold text-positive">Feedback von deinem Coach</span>
           </div>
           <p className="text-[15px] leading-relaxed whitespace-pre-wrap">{checkin.coachFeedback}</p>
         </Card>

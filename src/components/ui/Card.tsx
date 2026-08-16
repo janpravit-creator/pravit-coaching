@@ -179,8 +179,7 @@ export function DeltaBadge({
       className={cn(
         'tnum font-bold whitespace-nowrap',
         size === 'klein' ? 'text-[13px]' : 'text-[16px]',
-        // 13/16px liegt unter der Grenze für „große Schrift" – dunkler Ton.
-        neutral ? 'text-muted' : positive ? 'text-positive-strong' : 'text-negative-strong',
+        neutral ? 'text-muted' : positive ? 'text-positive' : 'text-negative',
       )}
     >
       {!neutral && (positive ? '▲ ' : '▼ ')}

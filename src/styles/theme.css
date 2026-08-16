@@ -1,75 +1,42 @@
 @import 'tailwindcss';
 
 /* ---------------------------------------------------------------------------
-   Design-Tokens — PRAVIT Corporate Design (Konzept Kap. 6).
-
-   „Klarheit und Vertrauen durch Reduktion": viel Weißraum, harte Kontraste,
-   keine Verspieltheit. Zahlen und Fortschritt stehen im Zentrum.
-
-   Markenfarben laut Konzept:
-     Near Black   #0D0D0D  Haupttext, dunkle Flächen
-     Pure White   #FFFFFF  Hauptgrund
-     Signal Green #00A868  Erfolg, positive Werte, Fortschritt
-     Grey         #666666  Sekundärtext, Metadaten
-     Light Grey   #F2F2F2  Kartengrund, Trennflächen
-     PRAVIT Gold  #C9A84C  einziger Markenakzent, sparsam
-
-   Zwei Tonlagen je Semantik, weil eine allein nicht beides kann:
-     `--c-…`         heller Markenton — Flächen, Balken, Icons, große Zahlen
-                     (ab 24px); mindestens 3:1 gegen den Grund.
-     `--c-…-strong`  dunkler Ton — jede kleine Schrift, auch auf der getönten
-                     Pille; mindestens 4.5:1.
-   Signal Green trägt auf Weiß 3.09:1. Das reicht für eine große Zahl, nicht
-   für eine 13px-Pille — daher die zweite Tonlage. `npm run kontrast` prüft
-   beide Rollen und bricht ab, wenn ein Paar unter die Schwelle fällt.
-
-   Light-First; das Dark-Theme spiegelt dieselben Rollen, dort kehrt sich das
-   Verhältnis um: `-strong` ist heller als der Markenton, nicht dunkler.
+   Design-Tokens.
+   Die Werte stammen aus den Screenshot-Vorlagen: heller, fast weißer Grund,
+   reinweiße Karten mit großem Radius und sehr weichem Schatten, schwarze
+   Typo, grauer Sekundärtext, Grün/Rot als einzige Akzente.
+   Light-First; das Dark-Theme spiegelt dieselben Rollen.
 --------------------------------------------------------------------------- */
 
 :root {
   color-scheme: light;
 
-  /* Flächen – neutrale Graustufen, kein Blaustich */
-  --c-page: #f2f2f2;
+  /* Flächen */
+  --c-page: #f2f3f5;
   --c-surface: #ffffff;
-  --c-surface-muted: #e8e8e8;
-  --c-surface-sunken: #dedede;
-  --c-line: #e0e0e0;
-  --c-line-strong: #cbcbcb;
+  --c-surface-muted: #eef0f4;
+  --c-surface-sunken: #e6e9ee;
+  --c-line: #e3e6ea;
+  --c-line-strong: #d2d7de;
 
   /* Text */
-  --c-text: #0d0d0d;
-  --c-text-muted: #666666;
-  --c-text-subtle: #8a8a8a;
+  --c-text: #0a0a0a;
+  --c-text-muted: #8f959e;
+  --c-text-subtle: #b4bac2;
   --c-text-inverted: #ffffff;
 
   /* Semantik */
-  --c-positive: #00a868;
-  --c-positive-strong: #00794c;
-  --c-positive-soft: #e0f4ec;
+  --c-positive: #34b857;
+  --c-positive-soft: #e6f6ea;
   --c-negative: #e5484d;
-  --c-negative-strong: #b4262b;
   --c-negative-soft: #fdecec;
-  --c-warning: #bd7d00;
-  --c-warning-strong: #8a5a00;
-  --c-warning-soft: #faf0dd;
+  --c-warning: #e8a33d;
+  --c-warning-soft: #fdf3e4;
   --c-info: #3b7ddd;
-  --c-info-strong: #1f4f9c;
   --c-info-soft: #eaf1fc;
 
-  /* Markenakzent – sparsam. Gold trägt auf Weiß nur 2.29:1 und ist damit
-     keine Schriftfarbe: als Fläche mit dunkler Schrift darauf (8.50:1), als
-     Schrift nur im dunklen Ton. */
-  --c-brand: #c9a84c;
-  --c-brand-strong: #7d6420;
-  --c-brand-soft: #f7f0dc;
-  /* Gold ist in beiden Themes hell – eine Goldfläche trägt immer dunkle
-     Schrift, nie weiße. Daher ein eigenes Token statt `--c-text-inverted`. */
-  --c-brand-on: #0d0d0d;
-
-  /* Aktion – Weiß auf Schwarz, laut Konzept die Schaltflächen-Regel */
-  --c-action: #0d0d0d;
+  /* Aktion – der schwarze Pill-Button aus den Vorlagen */
+  --c-action: #0a0a0a;
   --c-action-text: #ffffff;
 
   /* Overlay hinter Bottom-Sheets */
@@ -85,40 +52,29 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --c-page: #0d0d0d;
-  --c-surface: #171717;
-  --c-surface-muted: #212121;
-  --c-surface-sunken: #101010;
-  --c-line: #2b2b2b;
-  --c-line-strong: #3d3d3d;
+  --c-page: #0b0b0c;
+  --c-surface: #161719;
+  --c-surface-muted: #202225;
+  --c-surface-sunken: #0f1011;
+  --c-line: #2a2c30;
+  --c-line-strong: #3a3d42;
 
-  --c-text: #f7f7f7;
-  --c-text-muted: #9a9a9a;
-  --c-text-subtle: #6e6e6e;
-  --c-text-inverted: #0d0d0d;
+  --c-text: #f5f6f7;
+  --c-text-muted: #8b9098;
+  --c-text-subtle: #61666d;
+  --c-text-inverted: #0a0a0a;
 
-  /* Auf dunklem Grund ist der helle Ton der lesbare – `-strong` wird hier
-     heller, nicht dunkler, damit die Rolle „trägt kleine Schrift" bleibt. */
-  --c-positive: #00c27b;
-  --c-positive-strong: #3ddc97;
-  --c-positive-soft: #0d2c20;
+  --c-positive: #3ecb64;
+  --c-positive-soft: #14301c;
   --c-negative: #ff6167;
-  --c-negative-strong: #ff8f93;
   --c-negative-soft: #351718;
-  --c-warning: #e5a52e;
-  --c-warning-strong: #f2c169;
+  --c-warning: #f0b355;
   --c-warning-soft: #33270f;
   --c-info: #5c9bff;
-  --c-info-strong: #8bb8ff;
   --c-info-soft: #131f33;
 
-  --c-brand: #c9a84c;
-  --c-brand-strong: #ddc073;
-  --c-brand-soft: #2c2413;
-  --c-brand-on: #0d0d0d;
-
-  --c-action: #f7f7f7;
-  --c-action-text: #0d0d0d;
+  --c-action: #f5f6f7;
+  --c-action-text: #0a0a0a;
 
   --c-backdrop: rgb(0 0 0 / 0.55);
 
@@ -193,22 +149,13 @@
   --color-inverted: var(--c-text-inverted);
 
   --color-positive: var(--c-positive);
-  --color-positive-strong: var(--c-positive-strong);
   --color-positive-soft: var(--c-positive-soft);
   --color-negative: var(--c-negative);
-  --color-negative-strong: var(--c-negative-strong);
   --color-negative-soft: var(--c-negative-soft);
   --color-warning: var(--c-warning);
-  --color-warning-strong: var(--c-warning-strong);
   --color-warning-soft: var(--c-warning-soft);
   --color-info: var(--c-info);
-  --color-info-strong: var(--c-info-strong);
   --color-info-soft: var(--c-info-soft);
-
-  --color-brand: var(--c-brand);
-  --color-brand-strong: var(--c-brand-strong);
-  --color-brand-soft: var(--c-brand-soft);
-  --color-brand-on: var(--c-brand-on);
 
   --color-action: var(--c-action);
   --color-action-text: var(--c-action-text);

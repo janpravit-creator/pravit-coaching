@@ -140,7 +140,7 @@ export function TextButton({
       type="button"
       className={cn(
         'rounded-lg px-2 py-1.5 text-[15px] font-semibold transition-opacity active:opacity-60',
-        tone === 'negativ' ? 'text-negative-strong' : 'text-muted',
+        tone === 'negativ' ? 'text-negative' : 'text-muted',
         className,
       )}
       {...props}

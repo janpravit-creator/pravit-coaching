@@ -122,10 +122,10 @@ export function Pill({
 }) {
   const tones = {
     neutral: 'bg-surface-muted text-muted',
-    positiv: 'bg-positive-soft text-positive-strong',
-    negativ: 'bg-negative-soft text-negative-strong',
-    warnung: 'bg-warning-soft text-warning-strong',
-    info: 'bg-info-soft text-info-strong',
+    positiv: 'bg-positive-soft text-positive',
+    negativ: 'bg-negative-soft text-negative',
+    warnung: 'bg-warning-soft text-warning',
+    info: 'bg-info-soft text-info',
   } as const;
 
   return (

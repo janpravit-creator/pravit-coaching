@@ -65,7 +65,7 @@ export function VolumeBars({
                   <span
                     className={cn(
                       'tnum shrink-0 text-[14px] font-bold',
-                      below ? 'text-muted' : above ? 'text-warning-strong' : 'text-positive-strong',
+                      below ? 'text-muted' : above ? 'text-warning' : 'text-positive',
                     )}
                   >
                     {formatSets(row.value)}
