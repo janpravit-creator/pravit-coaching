@@ -1,0 +1,12 @@
+# Fertiges Bündel zum Ablegen bei Netlify – kein Build nötig.
+# Wichtig: KEIN `command`. Steht hier ein Build-Befehl, sucht Netlify eine
+# package.json und bricht mit ENOENT ab.
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
