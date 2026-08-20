@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "verbatimModuleSyntax": true,
+
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.functions.tsbuildinfo",
+
+    "baseUrl": ".",
+    "paths": { "@/*": ["./src/*"] }
+  },
+  // Netlify bündelt die Funktionen mit esbuild, und esbuild entfernt Typen,
+  // ohne sie zu prüfen. Ohne diesen eigenen Durchlauf fiele ein Tippfehler
+  // erst im laufenden Betrieb auf – bei einem Webhook also erst, wenn eine
+  // echte Zahlung verlorengeht.
+  // `src/domain/stripe.ts` gehört dazu: Die reine Logik liegt dort, damit sie
+  // ohne Stripe-Konto testbar ist, und wird von den Funktionen mitgenutzt.
+  "include": ["netlify/functions", "src/domain/stripe.ts"]
+}

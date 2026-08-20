@@ -1,0 +1,30 @@
+node_modules/
+dist/
+dist-ssr/
+dev-dist/
+coverage/
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+
+# Zugangsdaten der End-to-End-Tests. Stehen ausschliesslich lokal und
+# duerfen niemals ins Repository oder in einen Build gelangen.
+.env
+.env.*
+!.env.example
+
+*.local
+*.log
+npm-debug.log*
+yarn-error.log*
+
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Fertiges Bündel für den Netlify-Upload – gehört nicht ins Repository.
+pravit-coaching-dist.zip
+pravit-coaching-src.zip
+pravit-landingpage.zip

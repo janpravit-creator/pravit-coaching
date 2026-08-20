@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="PRAVIT Coaching">
+  <rect width="512" height="512" rx="112" fill="#000000" />
+  <!-- Hantel mit gestaffelten, getrennten Scheiben – dieselben Formen wie make-icons.mjs und AppMark.tsx. -->
+  <rect x="112" y="242" width="288" height="28" rx="14" fill="#FFFFFF" />
+  <rect x="100" y="166" width="44" height="180" rx="20" fill="#FFFFFF" />
+  <rect x="52" y="206" width="40" height="100" rx="20" fill="#FFFFFF" />
+  <rect x="368" y="166" width="44" height="180" rx="20" fill="#FFFFFF" />
+  <rect x="420" y="206" width="40" height="100" rx="20" fill="#FFFFFF" />
+</svg>
