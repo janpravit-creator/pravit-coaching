@@ -8,7 +8,7 @@
       name="description"
       content="Wissenschaftlich fundiertes Online-Coaching aus Hamburg. Trainingsplan und Ernährung in einer App, die mitdenkt – mit wöchentlichem Check-in und echter Betreuung."
     />
-    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="theme-color" content="#f3efe4" />
     <link rel="icon" href="icons/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
 
@@ -20,35 +20,54 @@
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="de_DE" />
 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=IBM+Plex+Mono:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-      /* Dieselben Token wie in der App, damit Seite und Produkt zusammenpassen. */
+      /* ── Token-System ─────────────────────────────────────────────── */
+      /* Papier statt Bildschirm: das Log lebt eigentlich auf Papier, die
+         App macht daraus nur ein besseres Papier. Rotstift-Akzent, weil
+         genau das den Unterschied macht – jemand liest deine Zahlen und
+         korrigiert live, statt dir ein PDF zu schicken. */
       :root {
-        --c-page: #f2f3f5;
-        --c-surface: #ffffff;
-        --c-surface-muted: #eef0f4;
-        --c-line: #e3e6ea;
-        --c-text: #0a0a0a;
-        --c-text-muted: #8f959e;
-        --c-action: #0a0a0a;
-        --c-action-text: #ffffff;
-        --c-positive: #34b857;
-        --radius-card: 22px;
-        --sh-card: 0 2px 12px rgb(0 0 0 / 0.05);
-        --sh-action: 0 6px 20px rgb(0 0 0 / 0.22);
+        --c-paper: #f3efe4;
+        --c-paper-raised: #fbf9f3;
+        --c-ink: #1b1a16;
+        --c-ink-soft: #6f6a5c;
+        --c-line: #ddd6c4;
+        --c-line-strong: #c8bfa6;
+        --c-red: #a8341f;
+        --c-red-soft: #a8341f14;
+        --c-green: #3c6e4a;
+        --radius: 18px;
+        --radius-sm: 10px;
+        --sh: 0 1px 2px rgb(27 26 22 / 0.04), 0 10px 24px -14px rgb(27 26 22 / 0.18);
+        --sh-raised: 0 18px 40px -18px rgb(27 26 22 / 0.28);
+        --f-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+        --f-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+        --f-body:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', system-ui,
+          sans-serif;
+        --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
       }
 
       @media (prefers-color-scheme: dark) {
         :root:not([data-theme='light']) {
-          --c-page: #0b0b0c;
-          --c-surface: #161719;
-          --c-surface-muted: #202225;
-          --c-line: #2a2c30;
-          --c-text: #f5f6f7;
-          --c-text-muted: #8b9098;
-          --c-action: #f5f6f7;
-          --c-action-text: #0a0a0a;
-          --c-positive: #3ecb64;
-          --sh-card: 0 2px 12px rgb(0 0 0 / 0.4);
+          --c-paper: #17160f;
+          --c-paper-raised: #201e15;
+          --c-ink: #f2eee1;
+          --c-ink-soft: #a49d88;
+          --c-line: #34301f;
+          --c-line-strong: #454026;
+          --c-red: #e0714f;
+          --c-red-soft: #e0714f1c;
+          --c-green: #6fae7f;
+          --sh: 0 1px 2px rgb(0 0 0 / 0.3), 0 10px 24px -14px rgb(0 0 0 / 0.5);
+          --sh-raised: 0 18px 44px -18px rgb(0 0 0 / 0.6);
         }
       }
 
@@ -57,20 +76,38 @@
         -webkit-tap-highlight-color: transparent;
       }
 
+      html {
+        scroll-behavior: smooth;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        * {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.001ms !important;
+        }
+      }
+
       body {
         margin: 0;
-        background: var(--c-page);
-        color: var(--c-text);
-        font-family:
-          -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto,
-          'Helvetica Neue', system-ui, sans-serif;
+        background: var(--c-paper);
+        color: var(--c-ink);
+        font-family: var(--f-body);
         -webkit-font-smoothing: antialiased;
         text-rendering: optimizeLegibility;
         line-height: 1.5;
       }
 
+      :focus-visible {
+        outline: 2px solid var(--c-red);
+        outline-offset: 2px;
+      }
+
       .huelle {
-        max-width: 780px;
+        max-width: 900px;
         margin: 0 auto;
         padding: 0 20px;
       }
@@ -82,21 +119,35 @@
         align-items: center;
         justify-content: space-between;
         gap: 16px;
-        padding: 22px 0;
+        padding: 24px 0;
       }
 
       .marke {
-        font-size: 20px;
-        font-weight: 800;
-        letter-spacing: 0.18em;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-family: var(--f-display);
+        font-size: 18px;
+        font-weight: 900;
+        letter-spacing: 0.14em;
       }
+
+      .marke .punkt {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--c-red);
+        flex: none;
+      }
+
+      /* ── Knöpfe ───────────────────────────────────────────────────── */
 
       .knopf {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
-        border: 0;
+        border: 1px solid var(--c-ink);
         border-radius: 999px;
         padding: 13px 22px;
         font-size: 15px;
@@ -104,17 +155,18 @@
         font-family: inherit;
         text-decoration: none;
         cursor: pointer;
-        background: var(--c-action);
-        color: var(--c-action-text);
-        box-shadow: var(--sh-action);
-        transition: opacity 0.15s ease;
+        background: var(--c-ink);
+        color: var(--c-paper);
+        box-shadow: var(--sh);
+        transition: transform 160ms var(--ease-out);
       }
       .knopf:active {
-        opacity: 0.7;
+        transform: scale(0.97);
       }
       .knopf.leise {
-        background: var(--c-surface-muted);
-        color: var(--c-text);
+        background: transparent;
+        color: var(--c-ink);
+        border-color: var(--c-line-strong);
         box-shadow: none;
       }
       .knopf.klein {
@@ -125,21 +177,65 @@
       /* ── Aufmacher ────────────────────────────────────────────────── */
 
       .aufmacher {
-        padding: 40px 0 56px;
+        position: relative;
+        padding: 28px 0 68px;
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 48px;
+        align-items: center;
+      }
+
+      /* Feines Karopapier – nur hier, als einziger dekorativer Auftritt. */
+      .aufmacher::before {
+        content: '';
+        position: absolute;
+        inset: -20px -20px auto -20px;
+        height: calc(100% + 40px);
+        background-image:
+          linear-gradient(var(--c-line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--c-line) 1px, transparent 1px);
+        background-size: 28px 28px;
+        opacity: 0.5;
+        mask-image: radial-gradient(ellipse 80% 70% at 30% 30%, black, transparent 75%);
+        z-index: -1;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--f-mono);
+        font-size: 12.5px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        color: var(--c-red);
+        margin: 0 0 16px;
+      }
+      .eyebrow::before {
+        content: '';
+        width: 16px;
+        height: 1px;
+        background: var(--c-red);
       }
 
       h1 {
         margin: 0 0 18px;
-        font-size: clamp(34px, 7vw, 52px);
-        line-height: 1.06;
-        letter-spacing: -0.03em;
-        font-weight: 800;
+        font-family: var(--f-display);
+        font-size: clamp(34px, 4.6vw, 50px);
+        line-height: 1.04;
+        letter-spacing: -0.02em;
+        font-weight: 900;
+      }
+
+      h1 em {
+        font-style: normal;
+        color: var(--c-red);
       }
 
       .unterzeile {
         margin: 0 0 30px;
-        font-size: clamp(17px, 2.4vw, 20px);
-        color: var(--c-text-muted);
+        font-size: clamp(16px, 1.8vw, 18px);
+        color: var(--c-ink-soft);
         max-width: 34em;
       }
 
@@ -149,66 +245,329 @@
         gap: 12px;
       }
 
+      /* ── Log-Karte (Signature Element) ───────────────────────────── */
+
+      .logkarte-huelle {
+        position: relative;
+      }
+
+      .logkarte {
+        background: var(--c-paper-raised);
+        border: 1px solid var(--c-line);
+        border-radius: var(--radius);
+        box-shadow: var(--sh-raised);
+        padding: 22px 22px 18px;
+        transform: rotate(1.4deg);
+        font-family: var(--f-mono);
+      }
+
+      .logkarte-kopf {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        padding-bottom: 12px;
+        margin-bottom: 14px;
+        border-bottom: 1px dashed var(--c-line-strong);
+      }
+
+      .logkarte-uebung {
+        font-family: var(--f-display);
+        font-weight: 800;
+        font-size: 16px;
+        letter-spacing: -0.01em;
+      }
+
+      .logkarte-woche {
+        font-size: 11.5px;
+        color: var(--c-ink-soft);
+        letter-spacing: 0.04em;
+      }
+
+      .logzeile {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 13.5px;
+        padding: 7px 0;
+      }
+
+      .logzeile.vorige {
+        color: var(--c-ink-soft);
+        opacity: 0.7;
+      }
+
+      .logzeile.aktuell {
+        font-weight: 600;
+        font-size: 14.5px;
+      }
+
+      .logzeile .stift-kreis {
+        position: relative;
+      }
+
+      .stift-kreis svg {
+        position: absolute;
+        left: -8px;
+        top: -9px;
+        width: calc(100% + 16px);
+        height: calc(100% + 20px);
+        overflow: visible;
+        pointer-events: none;
+      }
+
+      .stift-kreis path {
+        fill: none;
+        stroke: var(--c-red);
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-dasharray: 220;
+        stroke-dashoffset: 220;
+        animation: kreis-ziehen 700ms 900ms var(--ease-out) forwards;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .stift-kreis path {
+          animation: none;
+          stroke-dashoffset: 0;
+        }
+      }
+
+      @keyframes kreis-ziehen {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      .pr-abzeichen {
+        display: inline-block;
+        margin-left: 8px;
+        padding: 1px 7px;
+        border-radius: 5px;
+        background: var(--c-red);
+        color: var(--c-paper-raised);
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        transform: rotate(-4deg);
+      }
+
+      .logkarte-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px dashed var(--c-line-strong);
+      }
+
+      .chip {
+        font-size: 11px;
+        padding: 4px 9px;
+        border-radius: 999px;
+        background: var(--c-paper);
+        border: 1px solid var(--c-line);
+        color: var(--c-ink-soft);
+      }
+
+      .logkarte-notiz {
+        position: absolute;
+        bottom: -16px;
+        right: 8px;
+        background: var(--c-paper);
+        border: 1px solid var(--c-line);
+        border-radius: var(--radius-sm);
+        padding: 8px 12px;
+        font-family: var(--f-mono);
+        font-size: 11.5px;
+        color: var(--c-ink-soft);
+        transform: rotate(-2deg);
+        box-shadow: var(--sh);
+      }
+
+      @media (max-width: 760px) {
+        .aufmacher {
+          grid-template-columns: 1fr;
+          padding-bottom: 76px;
+        }
+        .logkarte-notiz {
+          display: none;
+        }
+      }
+
       /* ── Abschnitte ───────────────────────────────────────────────── */
 
       section {
-        padding: 44px 0;
+        padding: 52px 0;
         border-top: 1px solid var(--c-line);
       }
 
+      .abschnitt-kopf {
+        display: flex;
+        align-items: baseline;
+        gap: 14px;
+        margin-bottom: 8px;
+      }
+
+      .abschnitt-nr {
+        font-family: var(--f-mono);
+        font-size: 13px;
+        color: var(--c-red);
+        font-weight: 600;
+      }
+
       h2 {
-        margin: 0 0 8px;
-        font-size: clamp(24px, 4vw, 30px);
+        margin: 0;
+        font-family: var(--f-display);
+        font-size: clamp(23px, 3.4vw, 28px);
         line-height: 1.15;
-        letter-spacing: -0.02em;
+        letter-spacing: -0.015em;
         font-weight: 800;
       }
 
       .vorspann {
-        margin: 0 0 26px;
-        color: var(--c-text-muted);
+        margin: 0 0 28px;
+        color: var(--c-ink-soft);
         max-width: 38em;
       }
 
+      /* ── Für-wen-Karten ───────────────────────────────────────────── */
+
       .karten {
         display: grid;
-        gap: 14px;
+        gap: 12px;
         grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
       }
 
       .karte {
-        background: var(--c-surface);
-        border-radius: var(--radius-card);
-        box-shadow: var(--sh-card);
-        padding: 22px;
+        background: var(--c-paper-raised);
+        border: 1px solid var(--c-line);
+        border-radius: var(--radius);
+        box-shadow: var(--sh);
+        padding: 20px;
+        transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        .karte:hover {
+          transform: translateY(-3px);
+          box-shadow: var(--sh-raised);
+        }
+      }
+
+      .karte-etikett {
+        display: inline-block;
+        font-family: var(--f-mono);
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        color: var(--c-red);
+        background: var(--c-red-soft);
+        border-radius: 5px;
+        padding: 3px 7px;
+        margin-bottom: 10px;
       }
 
       .karte h3 {
         margin: 0 0 6px;
-        font-size: 17px;
-        font-weight: 700;
+        font-family: var(--f-display);
+        font-size: 16.5px;
+        font-weight: 800;
         letter-spacing: -0.01em;
       }
 
       .karte p {
         margin: 0;
-        font-size: 15px;
-        color: var(--c-text-muted);
+        font-size: 14.5px;
+        color: var(--c-ink-soft);
+      }
+
+      /* ── App-Merkmale ─────────────────────────────────────────────── */
+
+      .merkmale {
+        display: grid;
+        gap: 1px;
+        background: var(--c-line);
+        border: 1px solid var(--c-line);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+
+      .merkmal {
+        background: var(--c-paper-raised);
+        padding: 20px 22px;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: baseline;
+        gap: 4px 16px;
+      }
+
+      .merkmal h3 {
+        margin: 0;
+        font-family: var(--f-display);
+        font-size: 16.5px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        grid-column: 1;
+      }
+
+      .merkmal .messwert {
+        grid-column: 3;
+        font-family: var(--f-mono);
+        font-size: 12px;
+        color: var(--c-red);
+        white-space: nowrap;
+      }
+
+      .merkmal p {
+        grid-column: 1 / -1;
+        margin: 6px 0 0;
+        font-size: 14.5px;
+        color: var(--c-ink-soft);
+        max-width: 42em;
+      }
+
+      @media (max-width: 560px) {
+        .merkmal {
+          grid-template-columns: 1fr auto;
+        }
+        .merkmal h3 {
+          grid-column: 1;
+        }
+        .merkmal .messwert {
+          grid-column: 2;
+        }
       }
 
       /* ── Pakete ───────────────────────────────────────────────────── */
 
+      .paket-grid {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      }
+
       .paket {
-        background: var(--c-surface);
-        border-radius: var(--radius-card);
-        box-shadow: var(--sh-card);
-        padding: 24px;
+        background: var(--c-paper-raised);
+        border: 1px solid var(--c-line);
+        border-radius: var(--radius);
+        box-shadow: var(--sh);
+        padding: 22px;
         display: flex;
         flex-direction: column;
+        transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        .paket:hover {
+          transform: translateY(-3px);
+          box-shadow: var(--sh-raised);
+        }
       }
 
       .paket.hervor {
-        outline: 2px solid var(--c-text);
+        border-color: var(--c-ink);
+        box-shadow: var(--sh-raised);
       }
 
       .paket .kopf {
@@ -216,53 +575,55 @@
         align-items: baseline;
         justify-content: space-between;
         gap: 12px;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
       }
 
       .paket h3 {
         margin: 0;
-        font-size: 19px;
+        font-family: var(--f-display);
+        font-size: 18px;
         font-weight: 800;
         letter-spacing: -0.01em;
       }
 
       .preis {
-        font-size: 26px;
-        font-weight: 800;
-        letter-spacing: -0.02em;
+        font-family: var(--f-mono);
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
         white-space: nowrap;
         font-variant-numeric: tabular-nums;
       }
 
       .preis span {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--c-text-muted);
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--c-ink-soft);
       }
 
       .paket ul {
         margin: 14px 0 20px;
         padding: 0;
         list-style: none;
-        font-size: 15px;
+        font-size: 14.5px;
       }
 
       .paket li {
         position: relative;
-        padding-left: 24px;
+        padding-left: 22px;
         margin-bottom: 8px;
-        color: var(--c-text-muted);
+        color: var(--c-ink-soft);
       }
 
       .paket li::before {
         content: '';
         position: absolute;
-        left: 4px;
-        top: 8px;
+        left: 2px;
+        top: 7px;
         width: 8px;
         height: 4px;
-        border-left: 2px solid var(--c-positive);
-        border-bottom: 2px solid var(--c-positive);
+        border-left: 2px solid var(--c-green);
+        border-bottom: 2px solid var(--c-green);
         transform: rotate(-45deg);
       }
 
@@ -272,13 +633,16 @@
 
       .abzeichen {
         display: inline-block;
-        background: var(--c-surface-muted);
-        color: var(--c-text-muted);
+        font-family: var(--f-mono);
+        background: var(--c-red-soft);
+        color: var(--c-red);
         border-radius: 999px;
-        padding: 4px 12px;
-        font-size: 12px;
-        font-weight: 700;
+        padding: 4px 11px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
         margin-bottom: 12px;
+        width: fit-content;
       }
 
       /* ── Ablauf ───────────────────────────────────────────────────── */
@@ -293,8 +657,12 @@
       ol.ablauf li {
         counter-increment: schritt;
         position: relative;
-        padding-left: 52px;
+        padding-left: 54px;
         margin-bottom: 22px;
+      }
+
+      ol.ablauf li:last-child {
+        margin-bottom: 0;
       }
 
       ol.ablauf li::before {
@@ -307,65 +675,82 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 999px;
-        background: var(--c-action);
-        color: var(--c-action-text);
-        font-size: 15px;
-        font-weight: 800;
+        border-radius: 50%;
+        background: var(--c-ink);
+        color: var(--c-paper);
+        font-family: var(--f-mono);
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      ol.ablauf li:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        left: 17px;
+        top: 34px;
+        bottom: -22px;
+        width: 1px;
+        background: var(--c-line-strong);
       }
 
       ol.ablauf h3 {
         margin: 0 0 4px;
-        font-size: 17px;
-        font-weight: 700;
+        font-family: var(--f-display);
+        font-size: 16.5px;
+        font-weight: 800;
       }
 
       ol.ablauf p {
         margin: 0;
-        color: var(--c-text-muted);
-        font-size: 15px;
+        color: var(--c-ink-soft);
+        font-size: 14.5px;
       }
 
       /* ── Formular ─────────────────────────────────────────────────── */
 
       form {
-        background: var(--c-surface);
-        border-radius: var(--radius-card);
-        box-shadow: var(--sh-card);
-        padding: 24px;
+        background: var(--c-paper-raised);
+        border: 1px solid var(--c-line);
+        border-radius: var(--radius);
+        box-shadow: var(--sh);
+        padding: 26px;
       }
 
       label {
         display: block;
-        font-size: 13px;
-        font-weight: 700;
-        color: var(--c-text-muted);
+        font-family: var(--f-mono);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: var(--c-ink-soft);
         margin: 0 0 6px;
       }
 
       input,
       textarea {
         width: 100%;
-        background: var(--c-surface-muted);
-        border: 0;
-        border-radius: 14px;
-        padding: 14px 16px;
+        background: var(--c-paper);
+        border: 1px solid var(--c-line);
+        border-radius: var(--radius-sm);
+        padding: 13px 15px;
         /* Nie unter 16px – sonst zoomt iOS Safari beim Fokus hinein. */
         font-size: 16px;
-        font-family: inherit;
-        color: var(--c-text);
+        font-family: var(--f-body);
+        color: var(--c-ink);
         margin-bottom: 16px;
         resize: vertical;
+        transition: border-color 160ms ease;
       }
 
       input:focus,
       textarea:focus {
-        outline: 2px solid var(--c-text);
+        outline: none;
+        border-color: var(--c-red);
       }
 
       .hinweis {
         font-size: 13px;
-        color: var(--c-text-muted);
+        color: var(--c-ink-soft);
         margin: 14px 0 0;
       }
 
@@ -373,13 +758,13 @@
 
       footer {
         border-top: 1px solid var(--c-line);
-        padding: 30px 0 48px;
+        padding: 32px 0 52px;
         font-size: 14px;
-        color: var(--c-text-muted);
+        color: var(--c-ink-soft);
       }
 
       footer a {
-        color: var(--c-text);
+        color: var(--c-ink);
         text-decoration: none;
         font-weight: 600;
       }
@@ -389,65 +774,106 @@
         flex-wrap: wrap;
         gap: 18px;
         margin-bottom: 14px;
+        font-family: var(--f-mono);
+        font-size: 13px;
       }
 
       .rechtstext {
         display: none;
-        padding-top: 20px;
+        padding-top: 22px;
       }
       .rechtstext:target {
         display: block;
       }
       .rechtstext h2 {
-        font-size: 22px;
+        font-size: 21px;
       }
       .rechtstext h3 {
-        font-size: 16px;
+        font-family: var(--f-body);
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--c-ink);
         margin: 20px 0 4px;
       }
       .rechtstext p {
         font-size: 14px;
-        color: var(--c-text-muted);
+        color: var(--c-ink-soft);
         margin: 0 0 10px;
       }
 
       .platzhalter {
-        background: var(--c-surface-muted);
-        border-radius: 8px;
+        background: var(--c-red-soft);
+        color: var(--c-red);
+        border-radius: 5px;
         padding: 1px 7px;
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-        font-size: 0.9em;
+        font-family: var(--f-mono);
+        font-size: 0.88em;
       }
+
     </style>
   </head>
 
   <body>
     <div class="huelle">
       <header>
-        <div class="marke">PRAVIT</div>
+        <div class="marke"><span class="punkt"></span>PRAVIT</div>
         <a class="knopf leise klein" href="#kontakt">Kennenlernen</a>
       </header>
 
       <div class="aufmacher">
-        <h1>Dein Trainingsplan lebt&nbsp;— nicht auf Papier, sondern in einer App, die mitdenkt.</h1>
-        <p class="unterzeile">
-          Wissenschaftlich fundiertes Coaching aus Hamburg. Training und Ernährung in einer App,
-          wöchentlicher Check-in, Anpassungen anhand deiner echten Zahlen — nicht nach Schema F.
-        </p>
-        <div class="knopfreihe">
-          <a class="knopf" href="#kontakt">Unverbindlich anfragen</a>
-          <a class="knopf leise" href="#pakete">Pakete ansehen</a>
+        <div>
+          <p class="eyebrow">Personal Training · Hamburg</p>
+          <h1>Dein Trainingsplan lebt&nbsp;— nicht auf Papier, sondern in einer App, <em>die mitschreibt.</em></h1>
+          <p class="unterzeile">
+            Wissenschaftlich fundiertes Coaching. Training und Ernährung in einer App, wöchentlicher
+            Check-in, Anpassungen anhand deiner echten Zahlen — nicht nach Schema F.
+          </p>
+          <div class="knopfreihe">
+            <a class="knopf" href="#kontakt">Unverbindlich anfragen</a>
+            <a class="knopf leise" href="#pakete">Pakete ansehen</a>
+          </div>
+        </div>
+
+        <div class="logkarte-huelle">
+          <div class="logkarte" aria-hidden="true">
+            <div class="logkarte-kopf">
+              <span class="logkarte-uebung">Kniebeuge</span>
+              <span class="logkarte-woche">WOCHE 6</span>
+            </div>
+            <div class="logzeile vorige">
+              <span>Letzte Woche</span>
+              <span>3×5 @ 90&nbsp;kg · RPE 9</span>
+            </div>
+            <div class="logzeile aktuell">
+              <span>Heute</span>
+              <span class="stift-kreis">
+                3×5 @ 92,5&nbsp;kg · RPE 8
+                <svg viewBox="0 0 130 34"><path d="M8,20 C6,8 24,2 48,3 C90,4 124,8 122,18 C120,29 82,32 50,31 C22,30 4,28 8,19" /></svg>
+              </span>
+              <span class="pr-abzeichen">PR</span>
+            </div>
+            <div class="logkarte-chips">
+              <span class="chip">Schlaf 7,8&nbsp;h</span>
+              <span class="chip">Energie 8/10</span>
+              <span class="chip">Schritte 9.400</span>
+            </div>
+          </div>
+          <div class="logkarte-notiz">↳ +2,5&nbsp;kg seit letztem Check-in</div>
         </div>
       </div>
 
       <section id="fuer-wen">
-        <h2>Für wen das gemacht ist</h2>
+        <div class="abschnitt-kopf">
+          <span class="abschnitt-nr">01</span>
+          <h2>Für wen das gemacht ist</h2>
+        </div>
         <p class="vorspann">
           Nicht für jeden. Am besten passt es, wenn dein Training bisher an etwas hängt, das ein
           Standardplan nicht abbildet.
         </p>
         <div class="karten">
           <div class="karte">
+            <span class="karte-etikett">Ernährung</span>
             <h3>Abnehmen mit Einschränkungen</h3>
             <p>
               Allergien, Unverträglichkeiten, Medikamente. Der Ernährungsplan wird um das gebaut, was
@@ -455,6 +881,7 @@
             </p>
           </div>
           <div class="karte">
+            <span class="karte-etikett">Struktur</span>
             <h3>Wiedereinstieg nach einer Pause</h3>
             <p>
               Struktur und ein Tempo, das hält. Wichtiger als der perfekte Plan ist der, den du drei
@@ -462,6 +889,7 @@
             </p>
           </div>
           <div class="karte">
+            <span class="karte-etikett">Progression</span>
             <h3>Festgefahren im Plateau</h3>
             <p>
               Du trainierst seit Jahren, aber es geht nichts mehr. Wir schauen auf Volumen, Frequenz
@@ -469,6 +897,7 @@
             </p>
           </div>
           <div class="karte">
+            <span class="karte-etikett">Zeit</span>
             <h3>Wenig Zeit, voller Kalender</h3>
             <p>
               Effiziente Einheiten und Online-Betreuung statt fester Termine. Du trainierst, wann es
@@ -476,6 +905,7 @@
             </p>
           </div>
           <div class="karte">
+            <span class="karte-etikett">Gesundheit</span>
             <h3>Komplexere Gesundheitsprofile</h3>
             <p>
               ADHS, Schilddrüse, Medikation, alte Verletzungen. Das braucht Sorgfalt statt eines
@@ -486,35 +916,42 @@
       </section>
 
       <section id="app">
-        <h2>Die App ist der Unterschied</h2>
+        <div class="abschnitt-kopf">
+          <span class="abschnitt-nr">02</span>
+          <h2>Die App ist der Unterschied</h2>
+        </div>
         <p class="vorspann">
           Andere schicken PDFs. Bei PRAVIT liegt alles in einer App, die dein Training mitschreibt —
           und ich sehe, was wirklich passiert ist, bevor ich etwas ändere.
         </p>
-        <div class="karten">
-          <div class="karte">
+        <div class="merkmale">
+          <div class="merkmal">
             <h3>Logbuch mit Gedächtnis</h3>
+            <span class="messwert">jeder Satz</span>
             <p>
-              Jeder Satz mit Gewicht, Wiederholungen und RPE. Beim nächsten Mal steht daneben, was du
-              letztes Mal geschafft hast.
+              Gewicht, Wiederholungen und RPE. Beim nächsten Mal steht daneben, was du letztes Mal
+              geschafft hast.
             </p>
           </div>
-          <div class="karte">
+          <div class="merkmal">
             <h3>Wöchentlicher Check-in</h3>
+            <span class="messwert">jede Woche</span>
             <p>
               Gewicht, Schlaf, Energie, Stress, Schritte. Daraus wird der Plan angepasst — nicht aus
               einem Bauchgefühl.
             </p>
           </div>
-          <div class="karte">
+          <div class="merkmal">
             <h3>Ernährung mit echten Werten</h3>
+            <span class="messwert">live berechnet</span>
             <p>
               Lebensmittel-Datenbank mit Nährwerten, Mengen live umgerechnet. Kein Schätzen, kein
               separates Trackingtool.
             </p>
           </div>
-          <div class="karte">
+          <div class="merkmal">
             <h3>Fortschritt sichtbar</h3>
+            <span class="messwert">über die Zeit</span>
             <p>
               Gewichtsverlauf, Kraftentwicklung je Übung, Volumen über die Zeit. Auch an den Tagen,
               an denen sich nichts nach Fortschritt anfühlt.
@@ -524,12 +961,15 @@
       </section>
 
       <section id="pakete">
-        <h2>Pakete</h2>
+        <div class="abschnitt-kopf">
+          <span class="abschnitt-nr">03</span>
+          <h2>Pakete</h2>
+        </div>
         <p class="vorspann">
           Monatlich kündbar, keine Mindestlaufzeit. Wer jetzt einsteigt, behält seinen Preis auch
           dann, wenn ich später erhöhe.
         </p>
-        <div class="karten">
+        <div class="paket-grid">
           <div class="paket">
             <div class="kopf">
               <h3>Training</h3>
@@ -590,7 +1030,10 @@
       </section>
 
       <section id="ablauf">
-        <h2>Wie es losgeht</h2>
+        <div class="abschnitt-kopf">
+          <span class="abschnitt-nr">04</span>
+          <h2>Wie es losgeht</h2>
+        </div>
         <ol class="ablauf">
           <li>
             <h3>Kurzes Gespräch</h3>
@@ -624,7 +1067,10 @@
       </section>
 
       <section id="kontakt">
-        <h2>Unverbindlich anfragen</h2>
+        <div class="abschnitt-kopf">
+          <span class="abschnitt-nr">05</span>
+          <h2>Unverbindlich anfragen</h2>
+        </div>
         <p class="vorspann">
           Schreib mir kurz, worum es geht. Ich melde mich innerhalb von 24 Stunden — ohne
           Verkaufsgespräch.
