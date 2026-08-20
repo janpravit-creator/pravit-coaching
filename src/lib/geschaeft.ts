@@ -18,13 +18,13 @@ const aus = (name: string, ersatz: string): string =>
 export const GESCHAEFT = {
   name: aus('VITE_FIRMA_NAME', 'Jan Pravit Jungmann'),
   zusatz: aus('VITE_FIRMA_ZUSATZ', 'PRAVIT Coaching'),
-  strasse: aus('VITE_FIRMA_STRASSE', 'AUSFÜLLEN: Straße und Hausnummer'),
-  plzOrt: aus('VITE_FIRMA_PLZ_ORT', 'AUSFÜLLEN: PLZ und Ort'),
+  strasse: aus('VITE_FIRMA_STRASSE', 'Hartkrögen 109'),
+  plzOrt: aus('VITE_FIRMA_PLZ_ORT', '22559 Hamburg'),
   email: aus('VITE_FIRMA_EMAIL', 'jan.pravit@gmx.de'),
   telefon: aus('VITE_FIRMA_TELEFON', ''),
   /** Steuernummer vom Finanzamt. Ohne USt-IdNr., da Kleinunternehmer. */
   steuernummer: aus('VITE_FIRMA_STEUERNUMMER', 'AUSFÜLLEN: Steuernummer'),
-  iban: aus('VITE_FIRMA_IBAN', 'AUSFÜLLEN: IBAN'),
+  iban: aus('VITE_FIRMA_IBAN', 'DE80 2005 0550 1252 9032 63'),
   kontoinhaber: aus('VITE_FIRMA_KONTOINHABER', 'Jan Pravit Jungmann'),
   /** Zahlungsziel in Tagen ab Rechnungsdatum. */
   zahlungszielTage: Number(aus('VITE_FIRMA_ZAHLUNGSZIEL', '14')) || 14,
